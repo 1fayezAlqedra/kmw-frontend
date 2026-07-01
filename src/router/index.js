@@ -8,7 +8,6 @@ const routes = [
 
   {
     path: '/admin',
-    // تغيير الاستيراد هنا ليكون مسار نسبي مباشر ومستقر
     component: () => import('../layouts/AdminLayout.vue'),
     children: [
       {
@@ -20,6 +19,7 @@ const routes = [
         name: 'AdminDashboard',
         component: () => import('../views/Admin/Main.vue'),
       },
+      // --- قسم التصنيفات (Categories) ---
       {
         path: 'categories',
         name: 'ShowCategories',
@@ -34,6 +34,22 @@ const routes = [
         path: 'edit-category/:id',
         name: 'EditCategory',
         component: () => import('../views/Admin/EditCategory.vue'),
+      },
+      // --- قسم المنتجات (Products) ---
+      {
+        path: 'products',
+        name: 'ShowProducts',
+        component: () => import('../views/Admin/ShowProducts.vue'),
+      },
+      {
+        path: 'add-product',
+        name: 'AddProduct',
+        component: () => import('../views/Admin/AddProduct.vue'),
+      },
+      {
+        path: 'edit-product/:id',
+        name: 'EditProduct',
+        component: () => import('../views/Admin/EditProduct.vue'),
       },
     ],
   },
