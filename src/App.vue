@@ -1,10 +1,9 @@
 <template>
-  <AdminLayout />
+  <RouterView />
 </template>
 
 <script setup>
-import AdminLayout from '@/layouts/AdminLayout.vue'
-import Admin from '@/views/Admin/Login.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <style>

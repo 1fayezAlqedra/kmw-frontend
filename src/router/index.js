@@ -1,35 +1,58 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '@/views/Admin/Login.vue'
-import AdminLayout from '@/layouts/AdminLayout.vue'
 
 const routes = [
   {
-    path: '/admin/login',
-    name: 'AdminLogin',
-    component: Login
+    path: '/',
+    redirect: '/admin/dashboard',
   },
+
   {
     path: '/admin',
-    component: AdminLayout,
-    // أي صفحة نضعها داخل الـ children ستفتح تلقائياً داخل الـ Layout الرئيسي (مكان الكرت الأبيض)
+    component: () => import('@/layouts/AdminLayout.vue'),
     children: [
+      {
+        path: '', // في حال دخل المستخدم على /admin فقط
+        redirect: '/admin/dashboard',
+      },
       {
         path: 'dashboard',
         name: 'AdminDashboard',
-        component: () => import('@/layouts/AdminLayout.vue')
-      }
-    ]
+        component: () => import('@/views/Admin/Main.vue'),
+      },
+      {
+        path: 'categories',
+        name: 'ShowCategories',
+        component: () => import('@/views/Admin/ShowCategories.vue'),
+      },
+      {
+        path: 'add-category',
+        name: 'AddCategory',
+        component: () => import('@/views/Admin/AddCategory.vue'),
+      },
+      {
+        path: 'edit-category/:id', // هنا نمرر الـ id كـ параметр ديناميكي
+        name: 'EditCategory',
+        component: () => import('@/views/Admin/EditCategory.vue'),
+      },
+    ],
   },
-  // تحويل تلقائي: إذا دخل المستخدم على رابط الـ /admin مباشرة يحوله لصفحة الـ login
+
   {
-    path: '/admin/:pathMatch(.*)*',
-    redirect: '/admin/login'
-  }
+    path: '/:pathMatch(.*)*',
+    redirect: '/admin/dashboard',
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 
 export default router

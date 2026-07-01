@@ -10,20 +10,19 @@
       <Navbar :isCollapsed="isSidebarCollapsed" @open-sidebar="toggleSidebar" />
 
       <main class="flex-1 py-6 md:py-10 px-4 md:px-12 w-full box-border overflow-x-hidden">
-        <MainContent />
+        <RouterView :key="$route.fullPath" />
       </main>
-
 
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
+import { RouterView, useRoute } from 'vue-router' // أضف هذا السطر للتأكد من أن الفيو يقرأ المسارات
 import Sidebar from '@/components/Admin/Sidebar.vue'
 import Navbar from '@/components/Admin/Navbar.vue'
-import MainContent from '@/views/Admin/Main.vue'
 
+const route = useRoute() // تعريف الـ route الحالي
 const sidebarRef = ref(null)
 const isSidebarCollapsed = ref(true)
 
