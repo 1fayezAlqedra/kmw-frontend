@@ -8,31 +8,32 @@ const routes = [
 
   {
     path: '/admin',
-    component: () => import('@/layouts/AdminLayout.vue'),
+    // تغيير الاستيراد هنا ليكون مسار نسبي مباشر ومستقر
+    component: () => import('../layouts/AdminLayout.vue'),
     children: [
       {
-        path: '', // في حال دخل المستخدم على /admin فقط
+        path: '',
         redirect: '/admin/dashboard',
       },
       {
         path: 'dashboard',
         name: 'AdminDashboard',
-        component: () => import('@/views/Admin/Main.vue'),
+        component: () => import('../views/Admin/Main.vue'),
       },
       {
         path: 'categories',
         name: 'ShowCategories',
-        component: () => import('@/views/Admin/ShowCategories.vue'),
+        component: () => import('../views/Admin/ShowCategories.vue'),
       },
       {
         path: 'add-category',
         name: 'AddCategory',
-        component: () => import('@/views/Admin/AddCategory.vue'),
+        component: () => import('../views/Admin/AddCategory.vue'),
       },
       {
-        path: 'edit-category/:id', // هنا نمرر الـ id كـ параметр ديناميكي
+        path: 'edit-category/:id',
         name: 'EditCategory',
-        component: () => import('@/views/Admin/EditCategory.vue'),
+        component: () => import('../views/Admin/EditCategory.vue'),
       },
     ],
   },
