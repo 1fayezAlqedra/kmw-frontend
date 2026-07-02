@@ -29,7 +29,8 @@
         <span class="z-10 transition-transform duration-300 group-hover:scale-105">Overview</span>
       </RouterLink>
 
-   <div class="space-y-1">
+      <!-- --- Products Dropdown --- -->
+      <div class="space-y-1">
         <button @click="toggleDropdown('products')"
           class="nav-item w-full flex items-center justify-center px-6 py-4 text-slate-700 hover:text-slate-900 font-bold rounded-2xl transition-all relative overflow-hidden group cursor-pointer text-lg tracking-wide text-center">
           <span class="z-10 transition-transform duration-300 group-hover:scale-105">Products</span>
@@ -54,6 +55,7 @@
         </div>
       </div>
 
+      <!-- --- Categories Dropdown --- -->
       <div class="space-y-1">
         <button @click="toggleDropdown('categories')"
           class="nav-item w-full flex items-center justify-center px-6 py-4 text-slate-700 hover:text-slate-900 font-bold rounded-2xl transition-all relative overflow-hidden group cursor-pointer text-lg tracking-wide text-center">
@@ -64,17 +66,19 @@
           <div class="overflow-hidden space-y-1.5 text-center">
             <RouterLink to="/admin/categories"
               class="sub-nav-item block px-6 py-3 text-base font-extrabold text-slate-500 hover:text-amber-900 rounded-xl transition-all"
-              active-class="bg-[#F7F4F0] text-amber-950 font-black">
+              active-class="bg-[#EAE3DA]/50 text-amber-950 font-black">
               All Categories
             </RouterLink>
             <RouterLink to="/admin/add-category"
-              class="sub-nav-item block px-6 py-3 text-base font-extrabold text-slate-500 hover:text-amber-900 rounded-xl transition-all">
+              class="sub-nav-item block px-6 py-3 text-base font-extrabold text-slate-500 hover:text-amber-900 rounded-xl transition-all"
+              active-class="bg-[#EAE3DA]/50 text-amber-950 font-black">
               Add Category
             </RouterLink>
           </div>
         </div>
       </div>
 
+      <!-- --- Previous Projects Dropdown --- -->
       <div class="space-y-1">
         <button @click="toggleDropdown('projects')"
           class="nav-item w-full flex items-center justify-center px-6 py-4 text-slate-700 hover:text-slate-900 font-bold rounded-2xl transition-all relative overflow-hidden group cursor-pointer text-lg tracking-wide text-center">
@@ -83,16 +87,24 @@
         <div
           :class="['grid transition-all duration-400 ease-in-out overflow-hidden px-4', dropdowns.projects ? 'grid-rows-[1fr] opacity-100 mt-2 mb-2' : 'grid-rows-[0fr] opacity-0']">
           <div class="overflow-hidden space-y-1.5 text-center">
-            <a href="#"
-              class="sub-nav-item block px-6 py-3 text-base font-extrabold text-slate-500 hover:text-amber-900 rounded-xl transition-all">Show
-              All</a>
-            <a href="#"
-              class="sub-nav-item block px-6 py-3 text-base font-extrabold text-slate-500 hover:text-amber-900 rounded-xl transition-all">Add
-              Project</a>
+
+            <RouterLink to="/admin/projects"
+              class="sub-nav-item block px-6 py-3 text-base font-extrabold text-slate-500 hover:text-amber-900 rounded-xl transition-all"
+              active-class="bg-[#EAE3DA]/50 text-amber-950 font-black">
+              Show All
+            </RouterLink>
+
+            <RouterLink to="/admin/add-project"
+              class="sub-nav-item block px-6 py-3 text-base font-extrabold text-slate-500 hover:text-amber-900 rounded-xl transition-all"
+              active-class="bg-[#EAE3DA]/50 text-amber-950 font-black">
+              Add Project
+            </RouterLink>
+
           </div>
         </div>
       </div>
 
+      <!-- --- Videos Dropdown --- -->
       <div class="space-y-1">
         <button @click="toggleDropdown('videos')"
           class="nav-item w-full flex items-center justify-center px-6 py-4 text-slate-700 hover:text-slate-900 font-bold rounded-2xl transition-all relative overflow-hidden group cursor-pointer text-lg tracking-wide text-center">
@@ -138,7 +150,6 @@ import { ref, reactive } from 'vue'
 const emit = defineEmits(['toggle'])
 const isCollapsed = ref(true)
 
-// إضافة تصنيفات الـ dropdowns الجديدة في الـ Reactive state
 const dropdowns = reactive({
   products: false,
   categories: false,

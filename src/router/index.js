@@ -51,6 +51,22 @@ const routes = [
         name: 'EditProduct',
         component: () => import('../views/Admin/EditProduct.vue'),
       },
+      // --- قسم المشاريع (Projects) ---
+      {
+        path: 'projects',
+        name: 'ShowProjects',
+        component: () => import('../views/Admin/ShowProjects.vue'),
+      },
+      {
+        path: 'add-project',
+        name: 'AddProject',
+        component: () => import('../views/Admin/AddProject.vue'),
+      },
+      {
+        path: 'edit-project/:id',
+        name: 'EditProject',
+        component: () => import('../views/Admin/EditProject.vue'),
+      }
     ],
   },
 
