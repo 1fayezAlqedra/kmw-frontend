@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full mx-auto p-4 sm:p-0 animate-fade-in box-border overflow-hidden bg-[#F7F4EE] min-h-screen p-8" dir="ltr">
+  <div class="w-full mx-auto animate-fade-in box-border overflow-hidden bg-[#F7F4EE] min-h-screen p-4 sm:p-6 md:p-8" dir="ltr">
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-6 md:mb-8">
       <div class="bg-white p-4 sm:p-5 rounded-2xl border border-[#E6E1DA] flex items-center space-x-4 shadow-[0_4px_15px_-3px_rgba(161,70,29,0.02)]">
         <div class="p-3 bg-[#F7F4EE] text-[#091124] rounded-xl border border-[#ECE6DD] flex-shrink-0">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-[#E6E1DA] flex items-center space-x-4 shadow-[0_4px_15px_-3px_rgba(161,70,29,0.02)]">
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-[#E6E1DA] flex items-center space-x-4 shadow-[0_4px_15px_-3px_rgba(161,70,29,0.02)] sm:col-span-2 lg:col-span-1">
         <div class="p-3 bg-amber-50 text-[#A1461D] rounded-xl border border-amber-100 flex-shrink-0">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -39,11 +39,11 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-[1.75rem] border border-[#ECE6DD] shadow-[0_4px_20px_-4px_rgba(161,70,29,0.03)] w-full box-border overflow-hidden">
+    <div class="bg-white rounded-2xl md:rounded-[1.75rem] border border-[#ECE6DD] shadow-[0_4px_20px_-4px_rgba(161,70,29,0.03)] w-full box-border overflow-hidden">
 
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border-b border-[#ECE6DD] pb-5 p-5 sm:p-8">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border-b border-[#ECE6DD] p-5 md:p-8">
         <div>
-          <h4 class="text-xl md:text-2xl font-black text-[#091124] tracking-tight uppercase">Active Stock Catalog</h4>
+          <h4 class="text-lg md:text-2xl font-black text-[#091124] tracking-tight uppercase">Active Stock Catalog</h4>
           <p class="text-xs text-[#788FA6] font-bold mt-1">Review your global products list, multiple active galleries, and category nodes</p>
         </div>
 
@@ -69,17 +69,16 @@
         </div>
       </div>
 
-      <div class="w-full box-border overflow-x-auto scrollbar-thin">
+      <div class="hidden md:block w-full box-border overflow-x-auto scrollbar-thin">
         <table class="w-full border-collapse text-left table-auto">
-
           <thead>
             <tr class="border-b border-[#ECE6DD] text-[#788FA6] text-xs font-black uppercase tracking-wider bg-[#F7F4EE]/20">
-              <th class="py-4 px-4 sm:px-6 w-16">ID</th>
-              <th class="py-4 px-4 sm:px-6 min-w-[280px]">Product Info (EN)</th>
-              <th class="py-4 px-4 sm:px-6 min-w-[280px] text-right">بيانات المنتج (AR)</th>
-              <th class="py-4 px-4 sm:px-6 min-w-[130px]">Connected Group</th>
-              <th class="py-4 px-4 sm:px-6 min-w-[110px] text-center">Images Count</th>
-              <th class="py-4 px-4 sm:px-6 text-right w-28">Actions</th>
+              <th class="py-4 px-6 w-16">ID</th>
+              <th class="py-4 px-6 min-w-[240px]">Product Info (EN)</th>
+              <th class="py-4 px-6 min-w-[240px] text-right">بيانات المنتج (AR)</th>
+              <th class="py-4 px-6 min-w-[130px]">Connected Group</th>
+              <th class="py-4 px-6 min-w-[110px] text-center">Images Count</th>
+              <th class="py-4 px-6 text-right w-28">Actions</th>
             </tr>
           </thead>
 
@@ -89,11 +88,11 @@
               :key="product.id"
               class="hover:bg-[#F7F4EE]/20 transition-colors duration-200 group"
             >
-              <td class="py-5 px-4 sm:px-6 align-top pt-6">
+              <td class="py-5 px-6 align-top pt-6">
                 <span class="text-sm font-bold text-[#788FA6] font-mono">#{{ product.id }}</span>
               </td>
 
-              <td class="py-5 px-4 sm:px-6 align-top">
+              <td class="py-5 px-6 align-top">
                 <div class="flex items-start space-x-4">
                   <div class="w-12 h-12 rounded-xl border border-[#E6E1DA] overflow-hidden bg-white p-0.5 shadow-xs group-hover:border-[#091124]/30 transition-all flex-shrink-0">
                     <img :src="product.image_paths[0]" alt="Cover" class="w-full h-full object-cover rounded-lg" />
@@ -109,7 +108,7 @@
                 </div>
               </td>
 
-              <td class="py-5 px-4 sm:px-6 text-right align-top" dir="rtl">
+              <td class="py-5 px-6 text-right align-top" dir="rtl">
                 <div class="flex flex-col whitespace-normal break-words min-w-0">
                   <span class="text-sm sm:text-base font-black text-[#091124] font-sans group-hover:text-[#A1461D] transition-colors duration-200 block truncate">
                     {{ product.name_ar }}
@@ -120,19 +119,19 @@
                 </div>
               </td>
 
-              <td class="py-5 px-4 sm:px-6 align-top pt-5.5">
+              <td class="py-5 px-6 align-top pt-5.5">
                 <span class="inline-block text-[10px] text-[#A1461D] font-black uppercase tracking-wider bg-[#F7F4EE] px-2.5 py-1.5 rounded-lg border border-[#ECE6DD] shadow-xs whitespace-nowrap">
                   {{ product.category_name }}
                 </span>
               </td>
 
-              <td class="py-5 px-4 sm:px-6 text-center align-top pt-5.5">
+              <td class="py-5 px-6 text-center align-top pt-5.5">
                 <span class="inline-block text-xs font-black text-[#091124] bg-[#F7F4EE] px-3 py-1 rounded-full border border-[#E6E1DA] font-mono">
-                  {{ product.image_paths.length }} images
+                  {{ product.image_paths.length }} files
                 </span>
               </td>
 
-              <td class="py-5 px-4 sm:px-6 text-right align-top pt-4.5">
+              <td class="py-5 px-6 text-right align-top pt-4.5">
                 <div class="flex items-center justify-end gap-1.5">
                   <button
                     @click="handleEdit(product.id)"
@@ -156,18 +155,70 @@
                 </div>
               </td>
             </tr>
-
-            <tr v-if="filteredProducts.length === 0">
-              <td colspan="6" class="py-14 text-center px-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[#788FA6]/30 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4a2 2 0 012-2m16 0h-2m-2 0H5m-2 0h2" />
-                </svg>
-                <p class="text-sm font-black text-[#091124]">No items found in your catalog</p>
-                <p class="text-xs text-[#788FA6] font-bold mt-0.5">Try altering search keywords or publish a new product asset</p>
-              </td>
-            </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="block md:hidden divide-y divide-[#ECE6DD]/60">
+        <div
+          v-for="product in filteredProducts"
+          :key="product.id"
+          class="p-5 flex flex-col gap-4 bg-white"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-[#788FA6] font-mono">#{{ product.id }}</span>
+              <span class="text-[9px] text-[#A1461D] font-black uppercase tracking-wider bg-[#F7F4EE] px-2 py-1 rounded border border-[#ECE6DD]">
+                {{ product.category_name }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <button
+                @click="handleEdit(product.id)"
+                class="p-2 bg-[#F7F4EE]/60 text-slate-600 rounded-xl border border-[#ECE6DD]"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button
+                @click="handleDelete(product.id)"
+                class="p-2 bg-red-50 text-red-600 rounded-xl border border-red-100"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5">
+            <div class="w-14 h-14 rounded-xl border border-[#E6E1DA] overflow-hidden bg-white p-0.5 flex-shrink-0 relative">
+              <img :src="product.image_paths[0]" alt="Cover" class="w-full h-full object-cover rounded-lg" />
+              <span class="absolute bottom-0.5 right-0.5 text-[8px] bg-[#091124] text-white px-1 rounded font-mono font-bold">
+                {{ product.image_paths.length }}F
+              </span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-sm font-black text-[#091124]">{{ product.name_en }}</span>
+              <p class="text-xs text-[#788FA6] font-semibold mt-0.5 leading-relaxed line-clamp-2">{{ product.description_en }}</p>
+            </div>
+          </div>
+
+          <div class="bg-[#F7F4EE]/30 border border-[#ECE6DD]/60 rounded-xl p-3 flex flex-col text-right" dir="rtl">
+            <span class="text-sm font-black text-[#091124] font-sans">{{ product.name_ar }}</span>
+            <p class="text-xs text-[#788FA6] font-semibold mt-0.5 font-sans leading-relaxed line-clamp-2">{{ product.description_ar }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="filteredProducts.length === 0" class="py-14 text-center px-4 border-t border-[#ECE6DD]/50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-[#788FA6]/30 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4a2 2 0 012-2m16 0h-2m-2 0H5m-2 0h2" />
+        </svg>
+        <p class="text-sm font-black text-[#091124]">No items found in your catalog</p>
+        <p class="text-xs text-[#788FA6] font-bold mt-0.5">Try altering search keywords or publish a new product asset</p>
       </div>
 
     </div>
