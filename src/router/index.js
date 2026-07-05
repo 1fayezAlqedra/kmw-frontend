@@ -66,6 +66,22 @@ const routes = [
         path: 'edit-project/:id',
         name: 'EditProject',
         component: () => import('../views/Admin/EditProject.vue'),
+      },
+      // --- قسم الفيديوهات (Videos) ---
+      {
+        path: 'videos',
+        name: 'ShowVideos',
+        component: () => import('../views/Admin/ShowVideos.vue'),
+      },
+      {
+        path: 'add-video',
+        name: 'AddVideo',
+        component: () => import('../views/Admin/AddVideo.vue'),
+      },
+      {
+        path: 'edit-video/:id',
+        name: 'EditVideo',
+        component: () => import('../views/Admin/EditVideo.vue'),
       }
     ],
   },
