@@ -1,11 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
+  // 🔐 جعل صفحة تسجيل الدخول هي الواجهة الرئيسية للموقع
   {
     path: '/',
-    redirect: '/admin/dashboard',
+    name: 'Login',
+    component: () => import('../views/Admin/Login.vue'),
   },
-
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('../views/Admin/ForgotPassword.vue'),
+  },
+  {
+    path: '/reset-password', // الرابط الذي سيفتح عند الضغط على الإيميل
+    name: 'ResetPassword',
+    component: () => import('../views/Admin/ResetPassword.vue'),
+  },
+  // 👑 --- قسم لوحة التحكم والإدارة (Admin Dashboard Layout) ---
   {
     path: '/admin',
     component: () => import('../layouts/AdminLayout.vue'),
@@ -18,6 +30,12 @@ const routes = [
         path: 'dashboard',
         name: 'AdminDashboard',
         component: () => import('../views/Admin/Main.vue'),
+      },
+      // --- قسم إدارة الفريق والمشرفين ---
+      {
+        path: 'team-management',
+        name: 'TeamManagement',
+        component: () => import('../views/Admin/TeamManagement.vue'),
       },
       // --- قسم التصنيفات (Categories) ---
       {
@@ -82,13 +100,26 @@ const routes = [
         path: 'edit-video/:id',
         name: 'EditVideo',
         component: () => import('../views/Admin/EditVideo.vue'),
-      }
+      },
+      // --- قسم رسائل تواصل معنا (Contact Messages) ---
+      {
+        path: 'messages',
+        name: 'ShowMessages',
+        component: () => import('../views/Admin/ShowMessages.vue'),
+      },
+      // --- قسم الإعدادات العامة (System Settings) ---
+      {
+        path: 'settings',
+        name: 'ShowSettings',
+        component: () => import('../views/Admin/ShowSettings.vue'),
+      },
     ],
   },
 
+  // 🔄 في حال كتابة مسار خاطئ، يتم التوجيه تلقائياً لصفحة تسجيل الدخول
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/admin/dashboard',
+    redirect: '/',
   },
 ]
 
@@ -103,5 +134,10 @@ const router = createRouter({
     }
   },
 })
+
+// 🔓 تم تعطيل جدار الحماية مؤقتاً لتسهيل عملية التطوير والاختبار
+// router.beforeEach((to, from, next) => {
+//   next()
+// })
 
 export default router
