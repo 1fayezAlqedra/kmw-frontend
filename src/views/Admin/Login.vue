@@ -50,7 +50,7 @@
         </div>
 
         <div class="w-full max-w-sm text-center pt-2">
-          <router-link to="/forgot-password" class="...">Forget password?</router-link>
+          <router-link to="/forgot-password" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Forget password?</router-link>
         </div>
       </form>
     </div>
@@ -59,13 +59,21 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
 
 const handleLogin = () => {
-  console.log('Login attempt:', { email: email.value, password: password.value })
-  alert('Connecting to API soon! 🚀')
+  console.log('Showcase Login attempt:', { email: email.value, password: password.value })
+
+  // تخزين توكن وهمي لتخطي حماية المسارات (Route Guards) إن وجدت
+  localStorage.setItem('auth_token', 'mocked_admin_token_for_showcase')
+
+  // التوجيه المباشر إلى الداشبورد
+  router.push('/admin/dashboard')
 }
 </script>
 

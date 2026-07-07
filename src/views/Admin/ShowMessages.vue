@@ -1,244 +1,274 @@
 <template>
-  <!-- الحاوية ممتدة لـ max-w-6xl لتعطي الجدول حجماً أكبر وأفخم في منتصف الشاشة -->
-  <div class="w-full max-w-6xl mx-auto animate-fade-in box-border bg-[#F7F4F0] min-h-screen p-4 sm:p-6 md:p-8" dir="ltr">
+  <div class="w-full flex flex-col space-y-8 md:space-y-14 animate-fade-in px-4 sm:px-0 box-border overflow-hidden">
 
-    <!-- Header Block -->
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div>
-        <h3 class="text-2xl md:text-3xl font-black text-[#0A1A2F] tracking-tight uppercase">CONTACT MESSAGES</h3>
-        <p class="text-xs text-[#5C728D] font-bold mt-1">Manage, filter, and respond to inbound customer inquiries and stone requests</p>
+    <!-- --- Stats Cards Grid --- -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
+      <!-- Total Messages Card -->
+      <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[180px] relative overflow-hidden">
+        <div class="text-center">
+          <p class="text-[11px] text-amber-800/80 font-black uppercase tracking-[0.2em]">Total Messages</p>
+        </div>
+        <div class="flex flex-col items-center justify-center my-2 space-y-2">
+          <div class="p-2.5 rounded-xl bg-[#F7F4F0] text-amber-900 border border-[#EAE3DA]/60">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0l-3.586-3.586a2 2 0 00-2.828 0L12 14m0 0l-3.586-3.586a2 2 0 00-2.828 0L4 13" />
+            </svg>
+          </div>
+          <h3 class="text-4xl font-black text-slate-900 tracking-tight">{{ messages.length }}</h3>
+        </div>
+        <div class="text-center text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+          All Inquiries Combined
+        </div>
       </div>
 
-      <RouterLink
-        to="/admin/dashboard"
-        class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-white border border-[#EAE3DA] text-xs font-black text-[#0A1A2F] rounded-full transition-all duration-200 hover:bg-[#F7F4F0] shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] cursor-pointer whitespace-nowrap"
-      >
-        <span>← BACK TO DASHBOARD</span>
-      </RouterLink>
+      <!-- Unread Messages Card -->
+      <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[180px] relative overflow-hidden">
+        <div class="text-center">
+          <p class="text-[11px] text-amber-800/80 font-black uppercase tracking-[0.2em]">Unread Inquiries</p>
+        </div>
+        <div class="flex flex-col items-center justify-center my-2 space-y-2">
+          <div class="p-2.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200/60 relative">
+            <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 19v-8.93a2 2 0 01.89-1.664l8-4.8a2 2 0 012.22 0l8 4.8A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5" />
+            </svg>
+          </div>
+          <h3 class="text-4xl font-black text-amber-700 tracking-tight">{{ unreadCount }}</h3>
+        </div>
+        <div class="text-center text-[11px] text-amber-800 font-extrabold uppercase tracking-wider animate-pulse">
+          Requires Attention
+        </div>
+      </div>
+
+      <!-- Read Messages Card (جديد) -->
+      <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[180px] relative overflow-hidden">
+        <div class="text-center">
+          <p class="text-[11px] text-slate-500 font-black uppercase tracking-[0.2em]">Read Inquiries</p>
+        </div>
+        <div class="flex flex-col items-center justify-center my-2 space-y-2">
+          <div class="p-2.5 rounded-xl bg-slate-50 text-slate-600 border border-slate-200/60">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-4xl font-black text-slate-700 tracking-tight">{{ readCount }}</h3>
+        </div>
+        <div class="text-center text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+          Archived & Answered
+        </div>
+      </div>
     </div>
 
-    <!-- ─── CARDS BLOCK: عداد المسجات الذكي ─── -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-      <!-- كرت إجمالي الرسائل -->
-      <div class="bg-white rounded-2xl border border-[#EAE3DA] p-5 flex items-center justify-between shadow-[0_4px_15px_-3px_rgba(0,0,0,0.02)]">
-        <div>
-          <span class="block text-[10px] font-black text-[#5C728D] uppercase tracking-wider">Total Messages</span>
-          <span class="text-3xl font-black text-[#0A1A2F] mt-1 block">{{ totalCount }}</span>
-        </div>
-        <div class="w-12 h-12 rounded-xl bg-[#F7F4F0] flex items-center justify-center text-slate-500 font-bold text-lg">📩</div>
-      </div>
-
-      <!-- كرت الرسائل غير المقروءة (باللون البرتقالي المعتمد #A1461D للتنبيه) -->
-      <div class="bg-white rounded-2xl border border-[#EAE3DA] p-5 flex items-center justify-between shadow-[0_4px_15px_-3px_rgba(0,0,0,0.02)]">
-        <div>
-          <span class="block text-[10px] font-black text-[#5C728D] uppercase tracking-wider">Unread Messages</span>
-          <span class="text-3xl font-black text-[#A1461D] mt-1 block">{{ unreadCount }}</span>
-        </div>
-        <div class="w-12 h-12 rounded-xl bg-[#A1461D]/10 flex items-center justify-center text-[#A1461D] font-bold text-lg">✨</div>
-      </div>
-
-      <!-- كرت الرسائل المقروءة -->
-      <div class="bg-white rounded-2xl border border-[#EAE3DA] p-5 flex items-center justify-between shadow-[0_4px_15px_-3px_rgba(0,0,0,0.02)]">
-        <div>
-          <span class="block text-[10px] font-black text-[#5C728D] uppercase tracking-wider">Read Messages</span>
-          <span class="text-3xl font-black text-emerald-600 mt-1 block">{{ readCount }}</span>
-        </div>
-        <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-lg">✅</div>
-      </div>
-    </div>
-
-    <!-- ─── FILTER & SEARCH CONTROLS BLOCK ─── -->
-    <div class="bg-white rounded-2xl border border-[#EAE3DA] p-4 mb-6 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.02)] flex flex-col md:flex-row gap-4 items-center justify-between">
-      <!-- حقل البحث النصي -->
-      <div class="relative w-full md:max-w-md">
+    <!-- --- Filters & Search Bar --- -->
+    <div class="bg-white rounded-2xl p-4 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col lg:flex-row gap-4 justify-between items-center w-full box-border">
+      <!-- Search Input -->
+      <div class="relative w-full lg:max-w-xs">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </span>
         <input
-          type="text"
           v-model="searchQuery"
-          placeholder="Search by sender name, email, or keywords..."
-          class="w-full pl-4 pr-4 py-3 bg-[#F7F4F0]/40 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-[#A1461D] text-xs font-semibold text-slate-800 placeholder-slate-400 transition-all duration-300"
+          type="text"
+          placeholder="Search client, email..."
+          class="w-full pl-11 pr-4 py-3 bg-[#F7F4F0]/50 border border-[#E2D9CD] text-sm font-medium text-slate-800 placeholder-slate-400 rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white transition-all box-border"
         />
       </div>
 
-      <!-- فلتر الحالة كليكبل بالكامل -->
-      <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
-        <span class="text-[10px] font-black text-[#5C728D] uppercase tracking-wider">Filter Status:</span>
-        <div class="inline-flex rounded-xl border border-[#EAE3DA] p-1 bg-[#F7F4F0]/40">
-          <button
-            type="button"
-            @click="statusFilter = 'all'"
-            class="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
-            :class="statusFilter === 'all' ? 'bg-[#A1461D] text-white' : 'text-[#5C728D] hover:text-[#0A1A2F]'"
-          >
-            All
-          </button>
-          <button
-            type="button"
-            @click="statusFilter = 'unread'"
-            class="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
-            :class="statusFilter === 'unread' ? 'bg-[#A1461D] text-white' : 'text-[#5C728D] hover:text-[#0A1A2F]'"
-          >
-            Unread
-          </button>
-          <button
-            type="button"
-            @click="statusFilter = 'read'"
-            class="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
-            :class="statusFilter === 'read' ? 'bg-[#A1461D] text-white' : 'text-[#5C728D] hover:text-[#0A1A2F]'"
-          >
-            Read
-          </button>
+      <!-- Time Filter Dropdown (جديد ومنطقي) -->
+      <div class="relative w-full lg:w-56">
+        <select
+          v-model="timeFilter"
+          class="w-full px-4 py-3 bg-[#F7F4F0] border border-[#E2D9CD] text-xs font-black uppercase tracking-wider text-slate-700 rounded-xl focus:outline-none focus:border-amber-950 transition-all appearance-none cursor-pointer"
+        >
+          <option value="all">All Time</option>
+          <option value="24h">Last 24 Hours</option>
+          <option value="week">Last Week</option>
+          <option value="month">Last Month</option>
+          <option value="year">Last Year</option>
+        </select>
+        <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </span>
+      </div>
+
+      <!-- Read/Unread Filter Tabs -->
+      <div class="flex items-center space-x-1.5 bg-[#F7F4F0] p-1 rounded-xl w-full lg:w-auto overflow-x-auto no-scrollbar">
+        <button
+          @click="statusFilter = 'all'"
+          :class="['px-4 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer whitespace-nowrap', statusFilter === 'all' ? 'bg-amber-950 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800']">
+          All
+        </button>
+        <button
+          @click="statusFilter = 'unread'"
+          :class="['px-4 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer whitespace-nowrap', statusFilter === 'unread' ? 'bg-amber-950 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800']">
+          Unread
+        </button>
+        <button
+          @click="statusFilter = 'read'"
+          :class="['px-4 py-2.5 text-[11px] font-black uppercase tracking-wider rounded-lg transition-all cursor-pointer whitespace-nowrap', statusFilter === 'read' ? 'bg-amber-950 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800']">
+          Read
+        </button>
+      </div>
+    </div>
+
+    <!-- --- Messages Table Container (Responsive Wrapper) --- -->
+    <div class="bg-white rounded-2xl p-4 sm:p-8 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-x-auto block">
+      <div class="min-w-[1000px] w-full">
+
+        <!-- Table Header -->
+        <div class="grid grid-cols-12 border-b border-[#EAE3DA] pb-4 text-slate-400 text-xs font-black uppercase tracking-widest px-4">
+          <div class="col-span-3">Client Info</div>
+          <div class="col-span-2">Phone Number</div>
+          <div class="col-span-4">Message Snippet</div>
+          <div class="col-span-1 text-center">Received</div>
+          <div class="col-span-2 text-right">Actions</div>
         </div>
-      </div>
-    </div>
 
-    <!-- ─── MAIN CANVAS TABLE (حجم أكبر وأوضح) ─── -->
-    <div class="bg-white rounded-3xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse table-auto">
-
-          <!-- Table Head -->
-          <thead>
-            <tr class="border-b border-[#EAE3DA] bg-[#F7F4F0]/50">
-              <th class="p-5 text-xs font-black text-[#5C728D] uppercase tracking-wider w-1/4">Sender Details</th>
-              <th class="p-5 text-xs font-black text-[#5C728D] uppercase tracking-wider w-2/5">Message Content</th>
-              <th class="p-5 text-xs font-black text-[#5C728D] uppercase tracking-wider text-center w-1/6">Time & Date</th>
-              <th class="p-5 text-xs font-black text-[#5C728D] uppercase tracking-wider text-center">Status</th>
-              <th class="p-5 text-xs font-black text-[#5C728D] uppercase tracking-wider text-right">Actions</th>
-            </tr>
-          </thead>
-
-          <!-- Table Body -->
-          <tbody class="divide-y divide-[#EAE3DA]/60">
-            <tr
-              v-for="msg in filteredMessages"
-              :key="msg.id"
-              class="hover:bg-[#F7F4F0]/30 transition-colors duration-150"
-              :class="{'bg-[#A1461D]/5': !msg.is_read}"
-            >
-              <!-- تفاصيل المرسل الكليكبل بحجم خط أكبر -->
-              <td class="p-5 align-middle">
-                <div class="flex flex-col space-y-1.5">
-                  <span class="text-base font-black text-[#0A1A2F]">{{ msg.name }}</span>
-                  <!-- بريد كليكبل -->
-                  <a
-                    :href="`mailto:${msg.email}`"
-                    class="text-xs font-bold text-[#A1461D] hover:underline inline-flex items-center"
-                  >
-                    {{ msg.email }}
-                  </a>
-                  <!-- تلفون كليكبل -->
-                  <a
-                    v-if="msg.phone"
-                    :href="`tel:${msg.phone}`"
-                    class="text-xs font-bold text-[#5C728D] hover:text-[#0A1A2F] transition-colors"
-                  >
-                    📱 {{ msg.phone }}
-                  </a>
-                </div>
-              </td>
-
-              <!-- نص الرسالة بحجم أوضح ومريح للعين -->
-              <td class="p-5 align-middle">
-                <p class="text-sm text-slate-700 font-medium line-clamp-3 leading-relaxed max-w-md">
-                  {{ msg.message }}
-                </p>
-              </td>
-
-              <!-- عمود الوقت والتاريخ المستقل الواضح جداً -->
-              <td class="p-5 align-middle text-center whitespace-nowrap">
-                <div class="flex flex-col space-y-0.5">
-                  <span class="text-xs font-black text-[#0A1A2F]">{{ msg.time }}</span>
-                  <span class="text-[10px] font-bold text-slate-400">{{ msg.date }}</span>
-                </div>
-              </td>
-
-              <!-- حالة الرسالة كليكبل للتبديل السريع -->
-              <td class="p-5 align-middle text-center whitespace-nowrap">
-                <button
-                  @click="toggleReadStatus(msg)"
-                  class="inline-flex items-center px-3.5 py-1.5 rounded-full text-[10px] font-black tracking-wider uppercase transition-all duration-200 cursor-pointer"
-                  :class="msg.is_read
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : 'bg-[#A1461D]/10 text-[#A1461D] border border-[#A1461D]/20'"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full mr-1.5" :class="msg.is_read ? 'bg-emerald-500' : 'bg-[#A1461D]'"></span>
-                  {{ msg.is_read ? 'Read' : 'Unread' }}
-                </button>
-              </td>
-
-              <!-- زر المعاينة وفتح المودال -->
-              <td class="p-5 align-middle text-right whitespace-nowrap">
-                <button
-                  @click="openMessageModal(msg)"
-                  class="px-4 py-2.5 bg-[#F7F4F0] hover:bg-[#A1461D] text-[#0A1A2F] hover:text-white border border-[#EAE3DA] text-xs font-black rounded-xl transition-all duration-200 uppercase tracking-wider cursor-pointer shadow-xs"
-                >
-                  View Message
-                </button>
-              </td>
-            </tr>
-
-            <!-- لا يوجد نتائج -->
-            <tr v-if="filteredMessages.length === 0">
-              <td colspan="5" class="p-12 text-center text-sm font-bold text-[#5C728D]">
-                No contact messages found matching your search criteria.
-              </td>
-            </tr>
-          </tbody>
-
-        </table>
-      </div>
-    </div>
-
-    <!-- ─── MODAL DIALOG DISPLAY ─── -->
-    <div v-if="selectedMessage" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fade-in">
-      <div class="bg-white rounded-3xl border border-[#EAE3DA] shadow-2xl w-full max-w-xl overflow-hidden transform transition-all duration-300">
-
-        <!-- Modal Header -->
-        <div class="border-b border-[#EAE3DA] p-5 bg-[#F7F4F0]/40 flex items-center justify-between">
+        <!-- Empty State -->
+        <div v-if="filteredMessages.length === 0" class="py-16 text-center flex flex-col items-center justify-center space-y-4">
+          <div class="p-4 bg-[#F7F4F0] text-slate-400 rounded-full border border-[#EAE3DA]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0l-3.586-3.586a2 2 0 00-2.828 0L12 14m0 0l-3.586-3.586a2 2 0 00-2.828 0L4 13" />
+            </svg>
+          </div>
           <div>
-            <h4 class="text-sm font-black text-[#0A1A2F] uppercase tracking-wider">Inbound Inquiry Details</h4>
-            <p class="text-[10px] text-slate-400 font-bold mt-0.5">Received on {{ selectedMessage.date }} @ {{ selectedMessage.time }}</p>
-          </div>
-          <button @click="closeMessageModal" class="text-slate-400 hover:text-[#A1461D] transition-colors cursor-pointer text-sm font-bold">✕</button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="p-6 space-y-4">
-          <!-- تفاصيل سريعة للمرسل -->
-          <div class="grid grid-cols-2 gap-4 p-4 bg-[#F7F4F0]/30 border border-[#EAE3DA] rounded-xl text-xs">
-            <div>
-              <span class="block text-[10px] font-black text-[#5C728D] uppercase">Sender Name</span>
-              <span class="font-bold text-[#0A1A2F] text-sm">{{ selectedMessage.name }}</span>
-            </div>
-            <div>
-              <span class="block text-[10px] font-black text-[#5C728D] uppercase">Phone Line</span>
-              <a :href="`tel:${selectedMessage.phone}`" class="font-bold text-[#A1461D] text-sm hover:underline">{{ selectedMessage.phone || 'N/A' }}</a>
-            </div>
-            <div class="col-span-2">
-              <span class="block text-[10px] font-black text-[#5C728D] uppercase">Email Target</span>
-              <a :href="`mailto:${selectedMessage.email}`" class="font-bold text-[#A1461D] text-sm hover:underline">{{ selectedMessage.email }}</a>
-            </div>
-          </div>
-
-          <!-- نص الرسالة الكامل المكتوب -->
-          <div class="flex flex-col space-y-1.5">
-            <span class="text-[10px] font-black text-[#5C728D] uppercase tracking-wider">Full Message Block</span>
-            <div class="p-4 bg-white border border-[#EAE3DA] rounded-xl text-sm font-medium text-slate-700 max-h-56 overflow-y-auto leading-relaxed whitespace-pre-wrap">
-              {{ selectedMessage.message }}
-            </div>
+            <h5 class="text-base font-black text-slate-800 uppercase tracking-wide">No Messages Found</h5>
+            <p class="text-xs text-slate-400 font-bold mt-1">Try adjusting your search criteria or filters</p>
           </div>
         </div>
 
-        <!-- Modal Footer -->
-        <div class="p-4 border-t border-[#EAE3DA]/60 bg-[#F7F4F0]/20 flex justify-end">
-          <button
-            @click="closeMessageModal"
-            class="px-5 py-2.5 bg-[#A1461D] hover:bg-amber-950 text-white text-xs font-black rounded-xl transition-all duration-200 uppercase tracking-widest cursor-pointer"
+        <!-- Table Rows -->
+        <div class="divide-y divide-[#EAE3DA]/50 w-full flex flex-col">
+          <div
+            v-for="msg in filteredMessages"
+            :key="msg.id"
+            :class="[
+              'grid grid-cols-12 gap-0 py-5 items-center hover:bg-[#F7F4F0]/20 transition-all duration-200 px-4',
+              msg.isUnread ? 'bg-amber-600/[0.01]' : ''
+            ]"
           >
-            Close Dialog
+            <!-- Client Info -->
+            <div class="col-span-3 flex flex-col space-y-1 relative">
+              <span :class="['text-sm truncate block', msg.isUnread ? 'font-black text-slate-900' : 'font-bold text-slate-700']">
+                <span v-if="msg.isUnread" class="inline-block w-2 h-2 rounded-full bg-amber-700 mr-2 shrink-0"></span>
+                {{ msg.clientName }}
+              </span>
+              <a :href="`mailto:${msg.clientEmail}`" class="text-xs text-slate-400 hover:text-amber-900 font-bold transition-colors underline decoration-dotted underline-offset-4 truncate block">
+                {{ msg.clientEmail }}
+              </a>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="col-span-2 text-sm text-slate-600 font-semibold truncate">
+              <a :href="`tel:${msg.clientPhone}`" class="hover:text-amber-900 transition-colors">
+                {{ msg.clientPhone }}
+              </a>
+            </div>
+
+            <!-- Message Body Snippet -->
+            <div class="col-span-4 pr-6">
+              <p :class="['text-sm truncate', msg.isUnread ? 'text-slate-900 font-bold' : 'text-slate-500 font-medium']">
+                {{ msg.content }}
+              </p>
+            </div>
+
+            <!-- Date Received -->
+            <div class="col-span-1 text-center">
+              <span class="inline-block text-[11px] text-amber-900 font-black uppercase tracking-widest bg-[#F7F4F0] px-2.5 py-1 rounded-lg border border-[#E2D9CD]/70 whitespace-nowrap">
+                {{ msg.dateLabel }}
+              </span>
+            </div>
+
+            <!-- Operational Actions -->
+            <div class="col-span-2 flex items-center justify-end space-x-2">
+              <button
+                @click="toggleReadStatus(msg.id)"
+                class="p-2 bg-white hover:bg-[#F7F4F0] text-slate-500 hover:text-amber-900 rounded-xl border border-[#E2D9CD] transition-all cursor-pointer shadow-xs"
+                :title="msg.isUnread ? 'Mark as Read' : 'Mark as Unread'"
+              >
+                <svg v-if="msg.isUnread" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 19v-8.93a2 2 0 01.89-1.664l8-4.8a2 2 0 012.22 0l8 4.8A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5" />
+                </svg>
+              </button>
+
+              <button
+                @click="openModal(msg)"
+                class="px-4 py-2 bg-white hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border-2 border-[#E2D9CD] hover:border-amber-950 transition-all duration-300 uppercase tracking-widest shadow-sm cursor-pointer text-center"
+              >
+                View
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- --- Message Detail Modal --- -->
+    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div @click="closeModal" class="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity"></div>
+
+      <div class="bg-[#F7F4F0] rounded-2xl border border-[#EAE3DA] shadow-2xl w-full max-w-lg overflow-hidden z-10 animate-scale-up flex flex-col justify-between max-h-[90vh]">
+        <div class="px-6 py-5 bg-white border-b border-[#EAE3DA] flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-black text-slate-900 uppercase tracking-wide">Message Details</h3>
+            <p class="text-[10px] text-amber-800 font-extrabold tracking-widest uppercase mt-0.5">KMW Platform Inquiry</p>
+          </div>
+          <button @click="closeModal" class="w-8 h-8 bg-[#F7F4F0] hover:bg-slate-200 text-slate-500 hover:text-slate-900 rounded-xl flex items-center justify-center cursor-pointer border border-[#E2D9CD] transition-all text-sm">
+            ✕
           </button>
         </div>
 
+        <div class="p-6 space-y-5 overflow-y-auto no-scrollbar flex-1">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white p-3.5 rounded-xl border border-[#EAE3DA]/70">
+              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Sender Client</span>
+              <span class="text-sm font-black text-slate-900 block truncate">{{ selectedMessage?.clientName }}</span>
+            </div>
+            <div class="bg-white p-3.5 rounded-xl border border-[#EAE3DA]/70">
+              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Timeline Received</span>
+              <span class="text-sm font-bold text-amber-900 block truncate">{{ selectedMessage?.dateLabel }}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-1">
+              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider">Email Address</span>
+              <a :href="`mailto:${selectedMessage?.clientEmail}`" class="text-sm font-bold text-amber-950 hover:underline break-all truncate">
+                {{ selectedMessage?.clientEmail }}
+              </a>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-1">
+              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider">Phone Number</span>
+              <a :href="`tel:${selectedMessage?.clientPhone}`" class="text-sm font-bold text-amber-950 hover:underline break-all truncate">
+                {{ selectedMessage?.clientPhone }}
+              </a>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-2 min-h-[140px]">
+            <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider border-b border-[#F7F4F0] pb-1">Full Message Content</span>
+            <p class="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-wrap">
+              {{ selectedMessage?.content }}
+            </p>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 bg-white border-t border-[#EAE3DA] flex items-center justify-end space-x-3">
+          <button @click="closeModal" class="px-5 py-3 bg-[#F7F4F0] hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl border border-[#E2D9CD] transition-all uppercase tracking-widest cursor-pointer shadow-xs">
+            Close
+          </button>
+          <a :href="`mailto:${selectedMessage?.clientEmail}?subject=Regarding your inquiry to KMW Marble`" class="px-6 py-3 bg-amber-950 hover:bg-amber-900 text-white font-black text-xs rounded-xl transition-all uppercase tracking-widest shadow-md text-center block">
+            Reply via Email
+          </a>
+        </div>
       </div>
     </div>
 
@@ -248,93 +278,130 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-// بيانات تجريبية مبنية بالملي على الـ Migration وفصلنا الوقت والتاريخ بناء على طلبك
+// داتا مهيأة بالكامل لاختبار الفلتر الزمني والـ Dropdown بدقة
 const messages = ref([
   {
     id: 1,
-    name: 'Fayez Alqedra',
-    email: 'fayez@kmw-stone.com',
-    phone: '+966 50 123 4567',
-    message: 'Hello, I am interested in ordering 500 square meters of Imperial Gold Granite for a villa compound project in Riyadh. Please provide a pricing catalogue and delivery timeline.',
-    is_read: false,
-    time: '09:30 AM',
-    date: '2026-07-05'
+    clientName: 'John Doe',
+    clientEmail: 'john@example.com',
+    clientPhone: '+1 (555) 234-5678',
+    content: 'Interested in Carrara Marble slabs for a luxury villa project. I need detailed pricing regarding premium selections, expected production lead time, and shipping facilities directly to Dubai.',
+    dateLabel: '2 hours ago',
+    created_at: new Date(new Date().getTime() - 2 * 60 * 60 * 1000), // منذ ساعتين (أقل من 24 ساعة)
+    isUnread: true
   },
   {
     id: 2,
-    name: 'Architect Khalid',
-    email: 'khalid@design-studio.ae',
-    phone: '+971 4 999 8888',
-    message: 'Do you offer custom book-match alignment setups for Carrara White Marble blocks? Looking forward to collaborating with your technical workshop team.',
-    is_read: true,
-    time: '04:15 PM',
-    date: '2026-07-04'
+    clientName: 'Sarah Smith',
+    clientEmail: 'sarah.s@design.com',
+    clientPhone: '+1 (555) 876-5432',
+    content: 'Requesting the latest wholesale catalog for interior designers. We have multiple upcoming residential complexes looking for top-tier marble supplier alternatives.',
+    dateLabel: '3 days ago',
+    created_at: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // منذ 3 أيام (أقل من أسبوع)
+    isUnread: false
   },
   {
     id: 3,
-    name: 'Eng. Sarah Ahmed',
-    email: 'sarah@kmw-stone.com',
-    phone: '+966 55 444 3322',
-    message: 'Urgent request for Quartz samples. We have an upcoming hospitality gallery build next week.',
-    is_read: false,
-    time: '11:05 AM',
-    date: '2026-07-02'
+    clientName: 'Michael Chang',
+    clientEmail: 'm.chang@builders.io',
+    clientPhone: '+852 9876 5432',
+    content: 'Do you offer customized cutting options for large architectural cut-to-size formats? We have specific requirements for a commercial lobby wall cladding concept.',
+    dateLabel: '3 weeks ago',
+    created_at: new Date(new Date().getTime() - 21 * 24 * 60 * 60 * 1000), // منذ 3 أسابيع (أقل من شهر)
+    isUnread: true
+  },
+  {
+    id: 4,
+    clientName: 'Elena Rostova',
+    clientEmail: 'elena.r@luxury.ru',
+    clientPhone: '+7 (903) 123-4567',
+    content: 'Looking for a reliable supplier of Calacatta Gold for our hotel project in Moscow. Please provide available blocks and slab dimensions.',
+    dateLabel: '5 months ago',
+    created_at: new Date(new Date().getTime() - 150 * 24 * 60 * 60 * 1000), // منذ 5 أشهر (داخل السنة)
+    isUnread: false
   }
 ])
 
 const searchQuery = ref('')
-const statusFilter = ref('all') // Options: 'all', 'unread', 'read'
+const statusFilter = ref('all')
+const timeFilter = ref('all') // 'all', '24h', 'week', 'month', 'year'
+const isModalOpen = ref(false)
 const selectedMessage = ref(null)
 
-// ─── COMPUTED STATS CODES (حساب الأعداد للكروت التفاعلية تلقائياً) ───
-const totalCount = computed(() => messages.value.length)
-const unreadCount = computed(() => messages.value.filter(m => !m.is_read).length)
-const readCount = computed(() => messages.value.filter(m => m.is_read).length)
+// إحصائيات الكروت الذكية
+const unreadCount = computed(() => messages.value.filter(m => m.isUnread).length)
+const readCount = computed(() => messages.value.filter(m => !m.isUnread).length)
 
-// ─── COMPUTED FILTER LOGIC (البحث والفلترة الفورية معاً) ───
+// الفلترة الشاملة
 const filteredMessages = computed(() => {
+  const now = new Date()
+
   return messages.value.filter(msg => {
-    // 1. فلترة الحالة
-    const matchesStatus =
-      statusFilter.value === 'all' ||
-      (statusFilter.value === 'unread' && !msg.is_read) ||
-      (statusFilter.value === 'read' && msg.is_read)
+    // 1. فلتر البحث
+    const matchesSearch = msg.clientName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+                          msg.clientEmail.toLowerCase().includes(searchQuery.value.toLowerCase())
 
-    // 2. فلترة البحث النصي
-    const query = searchQuery.value.toLowerCase().trim()
-    const matchesSearch =
-      !query ||
-      msg.name.toLowerCase().includes(query) ||
-      msg.email.toLowerCase().includes(query) ||
-      msg.message.toLowerCase().includes(query) ||
-      (msg.phone && msg.phone.includes(query))
+    // 2. فلتر الحالة
+    let matchesStatus = true
+    if (statusFilter.value === 'unread') matchesStatus = msg.isUnread
+    if (statusFilter.value === 'read') matchesStatus = !msg.isUnread
 
-    return matchesStatus && matchesSearch
+    // 3. فلتر الوقت الدقيق (Dropdown)
+    let matchesTime = true
+    const diffTime = Math.abs(now - msg.created_at)
+    const diffHours = diffTime / (1000 * 60 * 60)
+    const diffDays = diffHours / 24
+
+    if (timeFilter.value === '24h') matchesTime = diffHours <= 24
+    if (timeFilter.value === 'week') matchesTime = diffDays <= 7
+    if (timeFilter.value === 'month') matchesTime = diffDays <= 30
+    if (timeFilter.value === 'year') matchesTime = diffDays <= 365
+
+    return matchesSearch && matchesStatus && matchesTime
   })
 })
 
-// تغيير حالة القراءة عند الضغط عليها كليكبل
-const toggleReadStatus = (msg) => {
-  msg.is_read = !msg.is_read
+const toggleReadStatus = (id) => {
+  const msg = messages.value.find(m => m.id === id)
+  if (msg) msg.isUnread = !msg.isUnread
 }
 
-// فتح المودال لقراءة النص وتحويله لقراءة تلقائية
-const openMessageModal = (msg) => {
+const openModal = (msg) => {
   selectedMessage.value = msg
-  msg.is_read = true
+  isModalOpen.value = true
+  msg.isUnread = false
 }
 
-const closeMessageModal = () => {
+const closeModal = () => {
+  isModalOpen.value = false
   selectedMessage.value = null
 }
 </script>
 
 <style scoped>
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 </style>

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-  // 🔐 جعل صفحة تسجيل الدخول هي الواجهة الرئيسية للموقع
+  // Authentication Routes
   {
     path: '/',
     name: 'Login',
@@ -13,11 +13,12 @@ const routes = [
     component: () => import('../views/Admin/ForgotPassword.vue'),
   },
   {
-    path: '/reset-password', // الرابط الذي سيفتح عند الضغط على الإيميل
+    path: '/reset-password',
     name: 'ResetPassword',
     component: () => import('../views/Admin/ResetPassword.vue'),
   },
-  // 👑 --- قسم لوحة التحكم والإدارة (Admin Dashboard Layout) ---
+
+  // Admin Dashboard Routes
   {
     path: '/admin',
     component: () => import('../layouts/AdminLayout.vue'),
@@ -31,13 +32,13 @@ const routes = [
         name: 'AdminDashboard',
         component: () => import('../views/Admin/Main.vue'),
       },
-      // --- قسم إدارة الفريق والمشرفين ---
+      // Team Management
       {
         path: 'team-management',
         name: 'TeamManagement',
         component: () => import('../views/Admin/TeamManagement.vue'),
       },
-      // --- قسم التصنيفات (Categories) ---
+      // Categories
       {
         path: 'categories',
         name: 'ShowCategories',
@@ -53,7 +54,7 @@ const routes = [
         name: 'EditCategory',
         component: () => import('../views/Admin/EditCategory.vue'),
       },
-      // --- قسم المنتجات (Products) ---
+      // Products
       {
         path: 'products',
         name: 'ShowProducts',
@@ -69,7 +70,7 @@ const routes = [
         name: 'EditProduct',
         component: () => import('../views/Admin/EditProduct.vue'),
       },
-      // --- قسم المشاريع (Projects) ---
+      // Projects
       {
         path: 'projects',
         name: 'ShowProjects',
@@ -85,7 +86,7 @@ const routes = [
         name: 'EditProject',
         component: () => import('../views/Admin/EditProject.vue'),
       },
-      // --- قسم الفيديوهات (Videos) ---
+      // Videos
       {
         path: 'videos',
         name: 'ShowVideos',
@@ -101,13 +102,13 @@ const routes = [
         name: 'EditVideo',
         component: () => import('../views/Admin/EditVideo.vue'),
       },
-      // --- قسم رسائل تواصل معنا (Contact Messages) ---
+      // Contact Messages
       {
         path: 'messages',
         name: 'ShowMessages',
         component: () => import('../views/Admin/ShowMessages.vue'),
       },
-      // --- قسم الإعدادات العامة (System Settings) ---
+      // System Settings
       {
         path: 'settings',
         name: 'ShowSettings',
@@ -116,7 +117,7 @@ const routes = [
     ],
   },
 
-  // 🔄 في حال كتابة مسار خاطئ، يتم التوجيه تلقائياً لصفحة تسجيل الدخول
+  // 404 Fallback
   {
     path: '/:pathMatch(.*)*',
     redirect: '/',
@@ -127,17 +128,8 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition
-    } else {
-      return { top: 0 }
-    }
+    return savedPosition ? savedPosition : { top: 0 }
   },
 })
-
-// 🔓 تم تعطيل جدار الحماية مؤقتاً لتسهيل عملية التطوير والاختبار
-// router.beforeEach((to, from, next) => {
-//   next()
-// })
 
 export default router

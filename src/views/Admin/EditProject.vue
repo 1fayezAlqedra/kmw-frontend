@@ -1,40 +1,30 @@
 <template>
   <div class="w-full mx-auto animate-fade-in box-border bg-[#F7F4F0] min-h-screen p-4 sm:p-6 md:p-8" dir="ltr">
 
-    <!-- Navigation Back -->
-    <div class="mb-6 flex items-center justify-between">
-      <RouterLink
-        to="/admin/projects"
-        class="inline-flex items-center space-x-2 text-xs font-black text-slate-400 hover:text-amber-950 uppercase tracking-widest transition-colors duration-200"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        <span>Back to Projects</span>
-      </RouterLink>
-    </div>
-
-    <!-- Main Container -->
-    <div class="bg-white rounded-2xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
-
-      <!-- Header -->
-      <div class="border-b border-[#EAE3DA] p-5 md:p-8 bg-white">
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
         <h4 class="text-lg md:text-2xl font-black text-slate-900 tracking-wide uppercase">Edit Marble Project</h4>
         <p class="text-xs text-slate-400 font-bold mt-1">Update marble specifications, localized text, and manage gallery images</p>
       </div>
 
-      <!-- Loading State -->
+      <RouterLink
+        to="/admin/projects"
+        class="inline-flex items-center justify-center px-6 py-3 bg-white hover:bg-[#F7F4F0] text-slate-900 border border-[#EAE3DA]/70 text-xs font-black rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.02)] transition-all duration-300 uppercase tracking-wider cursor-pointer self-end sm:self-auto"
+      >
+        <span class="mr-1.5 text-sm font-light">←</span> BACK TO PROJECTS
+      </RouterLink>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
+
       <div v-if="isLoadingData" class="p-20 flex flex-col items-center justify-center space-y-4">
         <div class="w-8 h-8 border-4 border-[#E2D9CD] border-t-amber-950 rounded-full animate-spin"></div>
         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Fetching Project Details...</p>
       </div>
 
-      <!-- Form Canvas -->
       <form v-else @submit.prevent="handleSubmit" class="p-5 md:p-8 space-y-6 md:space-y-8" enctype="multipart/form-data">
 
-        <!-- 1. Titles Grid (EN / AR) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-          <!-- Name EN -->
           <div class="flex flex-col space-y-2">
             <label class="text-xs font-black text-slate-400 uppercase tracking-wider">Project Title (English) <span class="text-red-500">*</span></label>
             <input
@@ -45,7 +35,6 @@
             />
           </div>
 
-          <!-- Name AR (RTL) -->
           <div class="flex flex-col space-y-2 text-right" dir="rtl">
             <label class="text-xs font-black text-slate-400 uppercase tracking-wider font-sans">اسم المشروع (بالعربية) <span class="text-red-500">*</span></label>
             <input
@@ -57,9 +46,7 @@
           </div>
         </div>
 
-        <!-- 2. Descriptions Grid (EN / AR) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-          <!-- Description EN -->
           <div class="flex flex-col space-y-2">
             <label class="text-xs font-black text-slate-400 uppercase tracking-wider">Description (English) <span class="text-red-500">*</span></label>
             <textarea
@@ -70,7 +57,6 @@
             ></textarea>
           </div>
 
-          <!-- Description AR (RTL) -->
           <div class="flex flex-col space-y-2 text-right" dir="rtl">
             <label class="text-xs font-black text-slate-400 uppercase tracking-wider font-sans">وصف المشروع (بالعربية) <span class="text-red-500">*</span></label>
             <textarea
@@ -82,7 +68,6 @@
           </div>
         </div>
 
-        <!-- 3. Video URL Optional -->
         <div class="flex flex-col space-y-2">
           <label class="text-xs font-black text-slate-400 uppercase tracking-wider">Showcase Video URL (Optional)</label>
           <input
@@ -92,14 +77,12 @@
           />
         </div>
 
-        <!-- 4. Multiple Images Management -->
         <div class="bg-[#F7F4F0]/40 border border-[#EAE3DA] rounded-2xl p-4 sm:p-6 md:p-8 space-y-6">
           <div>
             <h5 class="text-sm md:text-base font-black text-slate-900 uppercase tracking-wide">Project Images Album</h5>
             <p class="text-xs text-slate-400 font-bold mt-0.5">Manage existing photos or inject new ones to the collection</p>
           </div>
 
-          <!-- A. Existing Server Images (الصور المخزنة مسبقاً بقاعدة البيانات) -->
           <div v-if="existingImages.length > 0" class="space-y-2">
             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Active Gallery Photos</label>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -109,7 +92,6 @@
                 class="relative aspect-[4/3] rounded-xl border border-[#EAE3DA] bg-white p-1.5 shadow-xs group overflow-hidden"
               >
                 <img :src="img.image_path" class="w-full h-full object-cover rounded-lg" />
-                <!-- Delete Existing Target Overlay -->
                 <div class="absolute inset-0 bg-amber-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-200">
                   <button
                     type="button"
@@ -126,7 +108,6 @@
             </div>
           </div>
 
-          <!-- B. Drag and Drop Area for NEW Files -->
           <div class="space-y-2">
             <label class="text-[10px] font-black text-amber-900 uppercase tracking-widest block">Upload New Photos Bundle</label>
             <div
@@ -154,7 +135,6 @@
             </div>
           </div>
 
-          <!-- C. Previews for newly staged files -->
           <div v-if="newPreviews.length > 0" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pt-2">
             <div
               v-for="(url, index) in newPreviews"
@@ -163,7 +143,6 @@
             >
               <img :src="url" class="w-full h-full object-cover rounded-lg" />
               <span class="absolute top-2 left-2 bg-amber-950 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider">New</span>
-              <!-- Cancel Upload trigger -->
               <div class="absolute inset-0 bg-amber-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-200">
                 <button
                   type="button"
@@ -179,7 +158,6 @@
           </div>
         </div>
 
-        <!-- 5. Form Submission Block -->
         <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-[#EAE3DA]/60">
           <RouterLink
             to="/admin/projects"
@@ -214,7 +192,6 @@ const isDragging = ref(false)
 
 const projectId = route.params.id
 
-// البيانات النصية للمشروع
 const form = ref({
   name_en: '',
   name_ar: '',
@@ -223,20 +200,13 @@ const form = ref({
   video_url: ''
 })
 
-// التعامل مع الصور على جبهتين (القديم والجديد)
-const existingImages = ref([])  // الصور المحملة سابقاً من السيرفر وعليها IDs
-const newFiles = ref([])         // ملفات الصور الجديدة المضافة ولم ترفع بعد
-const newPreviews = ref([])      // روابط المعاينة للملفات الجديدة
+const existingImages = ref([])
+const newFiles = ref([])
+const newPreviews = ref([])
 
-// 1. جلب بيانات المشروع عند تحميل الصفحة
 const fetchProjectDetails = async () => {
   isLoadingData.value = true
   try {
-    // هان الـ API Call الفعلي لجلب المشروع بالـ ID:
-    // const response = await axios.get(`/api/v1/projects/${projectId}`)
-    // const data = response.data.data
-
-    // محاكاة سريعة للبيانات الراجعة بنفس هيكل الـ Database:
     await new Promise(resolve => setTimeout(resolve, 800))
 
     const mockData = {
@@ -252,14 +222,12 @@ const fetchProjectDetails = async () => {
       ]
     }
 
-    // تعبئة الفورم
     form.value.name_en = mockData.name_en
     form.value.name_ar = mockData.name_ar
     form.value.description_en = mockData.description_en
     form.value.description_ar = mockData.description_ar
     form.value.video_url = mockData.video_url
 
-    // فصل الصور القديمة
     existingImages.value = [...mockData.images]
 
   } catch (error) {
@@ -269,13 +237,9 @@ const fetchProjectDetails = async () => {
   }
 }
 
-// 2. حذف صورة قديمة موجودة على السيرفر فوراً أو تجميعها للحذف
 const removeExistingImage = async (imageId) => {
   if (confirm('Are you sure you want to delete this photo permanently from the database?')) {
     try {
-      // يفضل حذفها مباشرة عبر API مخصص للصور لتوفير الجهد:
-      // await axios.delete(`/api/v1/project-images/${imageId}`)
-
       existingImages.value = existingImages.value.filter(img => img.id !== imageId)
     } catch (error) {
       console.error(error)
@@ -283,7 +247,6 @@ const removeExistingImage = async (imageId) => {
   }
 }
 
-// 3. معالجة إضافة ملفات صور جديدة
 const handleFileSelect = (e) => { addFiles(e.target.files) }
 const handleDrop = (e) => { isDragging.value = false; addFiles(e.dataTransfer.files) }
 
@@ -302,7 +265,6 @@ const removeNewImage = (index) => {
   newPreviews.value.splice(index, 1)
 }
 
-// 4. حفظ التعديلات وإرسال الـ FormData للـ Laravel
 const handleSubmit = async () => {
   isSubmitting.value = true
   try {
@@ -317,21 +279,13 @@ const handleSubmit = async () => {
       data.append('video_url', form.value.video_url)
     }
 
-    // ملاحظة مهمة للـ Laravel: بما أنك بتعمل PUT أو PATCH مع FormData، الـ PHP ما بيقرا الـ Binary Files بـ PUT بشكل افتراضي.
-    // الطريقة الرسمية في لارافيل هي إرسال طلب POST مع إضافة حقل ميثود مزيف كالتالي:
     data.append('_method', 'PUT')
 
-    // إرسال الملفات الجديدة حبة حبة في مصفوفة الصور
     newFiles.value.forEach((file, index) => {
       data.append(`images[${index}]`, file)
     })
 
     console.log('Sending Update FormData via Method Spoofing:', data)
-
-    // الـ Axios call رح يكون POST وليس PUT بسبب مشكلة الـ FormData والـ PHP المعروفة:
-    // await axios.post(`/api/v1/projects/${projectId}`, data, {
-    //   headers: { 'Content-Type': 'multipart/form-data' }
-    // })
 
     await new Promise(resolve => setTimeout(resolve, 1000))
     router.push('/admin/projects')

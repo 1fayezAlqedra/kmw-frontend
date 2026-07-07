@@ -1,27 +1,24 @@
 <template>
   <div class="w-full mx-auto animate-fade-in box-border bg-[#F7F4F0] min-h-screen p-4 sm:p-6 md:p-8" dir="ltr">
 
-    <!-- Navigation Back -->
-    <div class="mb-6 flex items-center justify-between">
-      <RouterLink
-        to="/admin/projects"
-        class="inline-flex items-center space-x-2 text-xs font-black text-slate-400 hover:text-amber-950 uppercase tracking-widest transition-colors duration-200"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        <span>Back to Projects</span>
-      </RouterLink>
-    </div>
-
-    <!-- Main Container -->
-    <div class="bg-white rounded-2xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
-
-      <!-- Header -->
-      <div class="border-b border-[#EAE3DA] p-5 md:p-8 bg-white">
+    <!-- Top Action & Title Bar -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
         <h4 class="text-lg md:text-2xl font-black text-slate-900 tracking-wide uppercase">Add New Marble Project</h4>
         <p class="text-xs text-slate-400 font-bold mt-1">Upload marble showcase project directly with multiple gallery image files</p>
       </div>
+
+      <!-- Back to Projects Drop-Shadow Button (مطابق تماماً للهوية البصرية الفخمة) -->
+      <RouterLink
+        to="/admin/projects"
+        class="inline-flex items-center justify-center px-6 py-3 bg-white hover:bg-[#F7F4F0] text-slate-900 border border-[#EAE3DA]/70 text-xs font-black rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.02)] transition-all duration-300 uppercase tracking-wider cursor-pointer self-end sm:self-auto"
+      >
+        <span class="mr-1.5 text-sm font-light">←</span> BACK TO PROJECTS
+      </RouterLink>
+    </div>
+
+    <!-- Main Container Card -->
+    <div class="bg-white rounded-2xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
 
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="p-5 md:p-8 space-y-6 md:space-y-8" enctype="multipart/form-data">
@@ -91,7 +88,7 @@
           />
         </div>
 
-        <!-- 4. Multiple Image Files Upload (زي البرودكت حبة حبة) -->
+        <!-- 4. Multiple Image Files Upload -->
         <div class="bg-[#F7F4F0]/40 border border-[#EAE3DA] rounded-2xl p-4 sm:p-6 md:p-8 space-y-6">
           <div>
             <h5 class="text-sm md:text-base font-black text-slate-900 uppercase tracking-wide">Project Gallery Files</h5>
@@ -178,7 +175,6 @@ const router = useRouter()
 const isSubmitting = ref(false)
 const isDragging = ref(false)
 
-// الكائن الأساسي للبيانات النصية
 const form = ref({
   name_en: '',
   name_ar: '',
@@ -187,22 +183,18 @@ const form = ref({
   video_url: ''
 })
 
-// مصفوفتان منفصلتان للتعامل مع الصور مثل برودكت بالظبط
-const uploadedFiles = ref([]) // تحتوي على ملفات الـ File الـ Binary للـ API
-const previews = ref([])       // تحتوي على روابط المعاينة المحفوظة بالمتصفح مؤقتاً
+const uploadedFiles = ref([])
+const previews = ref([])
 
-// معالجة الملفات المحددة عبر الزر
 const handleFileSelect = (e) => {
   addFiles(e.target.files)
 }
 
-// معالجة الملفات عند إسقاطها بالماوس
 const handleDrop = (e) => {
   isDragging.value = false
   addFiles(e.dataTransfer.files)
 }
 
-// إضافة الملفات للمصفوفة وتوليد المعاينة البصرية
 const addFiles = (files) => {
   Array.from(files).forEach(file => {
     if (file.type.startsWith('image/')) {
@@ -212,11 +204,8 @@ const addFiles = (files) => {
   })
 }
 
-// حذف صورة معينة من المعاينة والملفات المراد رفعها
 const removeImage = (index) => {
-  // إلغاء تفعيل الـ Object URL لتوفير ذاكرة المتصفح
   URL.revokeObjectURL(previews.value[index])
-
   uploadedFiles.value.splice(index, 1)
   previews.value.splice(index, 1)
 }
@@ -224,9 +213,7 @@ const removeImage = (index) => {
 const handleSubmit = async () => {
   isSubmitting.value = true
   try {
-    // بما أننا نرفع ملفات حقيقية، يجب صياغة الطلب كـ FormData ليفهمه الـ Laravel
     const data = new FormData()
-
     data.append('name_en', form.value.name_en)
     data.append('name_ar', form.value.name_ar)
     data.append('description_en', form.value.description_en)
@@ -236,17 +223,11 @@ const handleSubmit = async () => {
       data.append('video_url', form.value.video_url)
     }
 
-    // إرسال مصفوفة الملفات حبة حبة بنفس الـ Key المعتمد بـ StoreProjectRequest
     uploadedFiles.value.forEach((file, index) => {
       data.append(`images[${index}]`, file)
     })
 
-    console.log('FormData Payload Ready to be sent to Laravel:', data)
-
-    // الآن الإرسال بـ Axios رح يكون بالشكل هاد:
-    // await axios.post('/api/v1/projects', data, {
-    //   headers: { 'Content-Type': 'multipart/form-data' }
-    // })
+    console.log('FormData Payload Ready:', data)
 
     await new Promise(resolve => setTimeout(resolve, 1200))
     router.push('/admin/projects')

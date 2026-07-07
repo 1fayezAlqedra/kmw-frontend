@@ -1,8 +1,10 @@
 <template>
   <div class="w-full flex flex-col space-y-8 md:space-y-14 animate-fade-in px-4 sm:px-0 box-border overflow-hidden">
 
+    <!-- --- Stats Cards Grid --- -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full">
 
+      <!-- Categories Card -->
       <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[240px] relative overflow-hidden">
         <div class="text-center">
           <p class="text-[11px] text-amber-800/80 font-black uppercase tracking-[0.2em]">Total Categories</p>
@@ -13,11 +15,12 @@
           </div>
           <h3 class="text-4xl font-black text-slate-900 tracking-tight">12</h3>
         </div>
-        <button class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm">
+        <RouterLink to="/admin/categories" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Categories
-        </button>
+        </RouterLink>
       </div>
 
+      <!-- Products Card -->
       <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[240px] relative overflow-hidden">
         <div class="text-center">
           <p class="text-[11px] text-amber-800/80 font-black uppercase tracking-[0.2em]">Premium Products</p>
@@ -28,11 +31,12 @@
           </div>
           <h3 class="text-4xl font-black text-slate-900 tracking-tight">148</h3>
         </div>
-        <button class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm">
+        <RouterLink to="/admin/products" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Products
-        </button>
+        </RouterLink>
       </div>
 
+      <!-- Projects Card -->
       <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[240px] relative overflow-hidden">
         <div class="text-center">
           <p class="text-[11px] text-amber-800/80 font-black uppercase tracking-[0.2em]">Previous Projects</p>
@@ -43,11 +47,12 @@
           </div>
           <h3 class="text-4xl font-black text-slate-900 tracking-tight">24</h3>
         </div>
-        <button class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm">
+        <RouterLink to="/admin/projects" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Projects
-        </button>
+        </RouterLink>
       </div>
 
+      <!-- Videos Card -->
       <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[240px] relative overflow-hidden">
         <div class="text-center">
           <p class="text-[11px] text-amber-800/80 font-black uppercase tracking-[0.2em]">Videos</p>
@@ -58,13 +63,14 @@
           </div>
           <h3 class="text-4xl font-black text-slate-900 tracking-tight">16</h3>
         </div>
-        <button class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm">
+        <RouterLink to="/admin/videos" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Videos
-        </button>
+        </RouterLink>
       </div>
 
     </div>
 
+    <!-- --- Recent Messages Section --- -->
     <div class="bg-white rounded-2xl p-4 sm:p-8 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full box-border">
 
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#EAE3DA] pb-5 mb-5">
@@ -72,13 +78,15 @@
           <h4 class="text-xl md:text-2xl font-black text-slate-900 tracking-wide uppercase">Recent Messages</h4>
           <p class="text-xs text-slate-400 font-bold mt-1">Latest inquiries from the contact page</p>
         </div>
-        <button class="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-[#F7F4F0] hover:bg-amber-950 hover:text-white text-amber-900 border border-[#E2D9CD] text-xs font-black rounded-xl transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center">
+        <RouterLink to="/admin/messages" class="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-[#F7F4F0] hover:bg-amber-950 hover:text-white text-amber-900 border border-[#E2D9CD] text-xs font-black rounded-xl transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View All Messages
-        </button>
+        </RouterLink>
       </div>
 
+      <!-- Messages Table / List -->
       <div class="w-full box-border overflow-hidden">
 
+        <!-- Table Header (Desktop Only) -->
         <div class="hidden md:grid md:grid-cols-12 border-b border-[#EAE3DA] pb-3 text-slate-400 text-xs font-black uppercase tracking-widest pl-4 pr-4">
           <div class="col-span-3">Client</div>
           <div class="col-span-5">Message</div>
@@ -86,8 +94,10 @@
           <div class="col-span-2 text-right">Action</div>
         </div>
 
+        <!-- Table Body -->
         <div class="divide-y divide-[#EAE3DA]/50 w-full flex flex-col">
 
+          <!-- Message Row 1 -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 py-5 md:py-6 items-center hover:bg-[#F7F4F0]/20 transition-colors duration-200 rounded-xl md:rounded-none px-2 md:px-4">
 
             <div class="col-span-1 md:col-span-3 flex flex-col space-y-1">
@@ -110,13 +120,14 @@
             </div>
 
             <div class="col-span-1 md:col-span-2 text-right w-full">
-              <button class="w-full md:w-auto px-6 py-3.5 bg-white hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border-2 border-[#E2D9CD] hover:border-amber-950 transition-all duration-300 uppercase tracking-widest shadow-sm cursor-pointer text-center">
+              <RouterLink to="/admin/messages" class="w-full md:w-auto px-6 py-3.5 bg-white hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border-2 border-[#E2D9CD] hover:border-amber-950 transition-all duration-300 uppercase tracking-widest shadow-sm cursor-pointer text-center block">
                 Open Message
-              </button>
+              </RouterLink>
             </div>
 
           </div>
 
+          <!-- Message Row 2 -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 py-5 md:py-6 items-center hover:bg-[#F7F4F0]/20 transition-colors duration-200 rounded-xl md:rounded-none px-2 md:px-4">
 
             <div class="col-span-1 md:col-span-3 flex flex-col space-y-1">
@@ -139,9 +150,9 @@
             </div>
 
             <div class="col-span-1 md:col-span-2 text-right w-full">
-              <button class="w-full md:w-auto px-6 py-3.5 bg-white hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border-2 border-[#E2D9CD] hover:border-amber-950 transition-all duration-300 uppercase tracking-widest shadow-sm cursor-pointer text-center">
+              <RouterLink to="/admin/messages" class="w-full md:w-auto px-6 py-3.5 bg-white hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border-2 border-[#E2D9CD] hover:border-amber-950 transition-all duration-300 uppercase tracking-widest shadow-sm cursor-pointer text-center block">
                 Open Message
-              </button>
+              </RouterLink>
             </div>
 
           </div>

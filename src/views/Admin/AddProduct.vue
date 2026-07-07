@@ -10,7 +10,7 @@
         to="/admin/products"
         class="mt-4 sm:mt-0 flex items-center justify-center gap-2 bg-white hover:bg-[#F7F4EE] text-[#091124] px-5 py-2.5 rounded-full font-black text-[11px] tracking-wider border border-[#E6E1DA] shadow-xs uppercase transition-all"
       >
-        ← BACK TO DASHBOARD
+        ← BACK TO PRODUCTS
       </router-link>
     </div>
 
