@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router' // 1. استيراد الـ Hash History بدلاً من الـ Web History
 
 const routes = [
   // Authentication Routes
@@ -125,7 +125,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  // 2. تمرير الـ BASE_URL داخل الـ Hash History ليعمل بشكل متوافق تماماً مع الـ base path المعرف بـ Vite
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
     return savedPosition ? savedPosition : { top: 0 }
