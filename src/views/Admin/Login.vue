@@ -37,14 +37,20 @@
           </div>
         </div>
 
+        <div v-if="errorMessage" class="w-full max-w-sm text-center text-red-600 font-bold text-sm bg-red-50/80 backdrop-blur-sm py-3 px-4 rounded-2xl border border-red-200/50 transition-all duration-300">
+          {{ errorMessage }}
+        </div>
+
         <div class="w-full max-w-sm">
           <div class="relative group pt-4">
-            <button type="submit"
-              class="w-full py-4 px-6 bg-slate-950 text-white text-lg font-bold rounded-2xl transition-all duration-500 relative overflow-hidden group cursor-pointer shadow-md">
+            <button type="submit" :disabled="loading"
+              class="w-full py-4 px-6 bg-slate-950 text-white text-lg font-bold rounded-2xl transition-all duration-500 relative overflow-hidden group cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
               <div
                 class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out pointer-events-none bg-cover bg-center marble-bg-hover">
               </div>
-              <span class="relative z-10 group-hover:text-slate-900 transition-colors duration-300">Login now</span>
+              <span class="relative z-10 group-hover:text-slate-900 transition-colors duration-300">
+                {{ loading ? 'Checking...' : 'Login now' }}
+              </span>
             </button>
           </div>
         </div>
@@ -60,20 +66,49 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
+import authService from '@/api/authService'
 const router = useRouter()
 
 const email = ref('')
 const password = ref('')
+const loading = ref(false)
+const errorMessage = ref('')
 
 const handleLogin = () => {
-  console.log('Showcase Login attempt:', { email: email.value, password: password.value })
+  loading.value = true
+  errorMessage.value = ''
 
-  // تخزين توكن وهمي لتخطي حماية المسارات (Route Guards) إن وجدت
-  localStorage.setItem('auth_token', 'mocked_admin_token_for_showcase')
+  // تجميع البيانات لإرسالها
+  const credentials = {
+    email: email.value,
+    password: password.value
+  }
 
-  // التوجيه المباشر إلى الداشبورد
-  router.push('/admin/dashboard')
+  // إرسال الطلب الفعلي عبر Axios للباك إيند
+  authService.login(credentials)
+    .then(response => {
+      if (response.data.success) {
+        // لقطنا الـ Token الحقيقي الصادر من الـ Laravel Sanctum
+        const token = response.data.access_token
+
+        // تخزين التوكن الحقيقي في المتصفح
+        localStorage.setItem('token', token)
+
+        // التوجيه المباشر والآمن للداشبورد
+        router.push('/admin/dashboard')
+      }
+    })
+    .catch(error => {
+      // عرض تفاصيل الخطأ القادم من السيرفر
+      if (error.response && error.response.data) {
+        errorMessage.value = error.response.data.message || 'Invalid email or password.'
+      } else {
+        errorMessage.value = 'Connection error. Please check if the backend server is running.'
+      }
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>
 
