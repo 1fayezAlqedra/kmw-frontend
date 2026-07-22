@@ -13,9 +13,14 @@
       </router-link>
     </div>
 
-    <div class="max-w-6xl mx-auto bg-white rounded-[1.75rem] border border-[#ECE6DD] p-10 shadow-xs">
+    <div v-if="isLoading" class="max-w-6xl mx-auto text-center py-20 text-[#788FA6] font-bold">
+      Loading product details...
+    </div>
+
+    <div v-else class="max-w-6xl mx-auto bg-white rounded-[1.75rem] border border-[#ECE6DD] p-10 shadow-xs">
       <form @submit.prevent="handleSubmit" class="space-y-8">
 
+        <!-- Product Names -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="flex flex-col gap-2.5">
             <label class="text-[11px] font-black tracking-wider">
@@ -44,6 +49,7 @@
           </div>
         </div>
 
+        <!-- Product Category -->
         <div class="flex flex-col gap-2.5">
           <label class="text-[11px] font-black tracking-wider">
             <span class="text-[#788FA6] uppercase">PRODUCT CATEGORY</span>
@@ -63,6 +69,7 @@
           </div>
         </div>
 
+        <!-- Descriptions -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="flex flex-col gap-2.5">
             <label class="text-[11px] font-black tracking-wider">
@@ -91,6 +98,7 @@
           </div>
         </div>
 
+        <!-- Image Management -->
         <div class="flex flex-col gap-2.5">
           <label class="text-[11px] font-black tracking-wider text-[#788FA6] uppercase">MANAGE PRODUCT IMAGES</label>
           <div class="flex items-center justify-center w-full">
@@ -121,12 +129,14 @@
           </div>
         </div>
 
+        <!-- Submit Button -->
         <div class="flex items-center justify-end pt-5 border-t border-[#ECE6DD]">
           <button
             type="submit"
-            class="px-8 py-3.5 rounded-xl bg-[#091124] hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all"
+            :disabled="isSubmitting"
+            class="px-8 py-3.5 rounded-xl bg-[#091124] hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all disabled:opacity-50"
           >
-            UPDATE PRODUCT
+            {{ isSubmitting ? 'UPDATING...' : 'UPDATE PRODUCT' }}
           </button>
         </div>
 
@@ -136,33 +146,80 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 
 const route = useRoute()
-const productId = ref(route.params.id || '1')
+const router = useRouter()
+const productId = ref(route.params.id)
 
-const categories = ref([
-  { id: 1, name_ar: 'رخام إيطالي', name_en: 'Italian Marble' },
-  { id: 2, name_ar: 'جرانيت طبيعي', name_en: 'Natural Granite' }
-])
+const categories = ref([])
+const isLoading = ref(true)
+const isSubmitting = ref(false)
 
 const form = ref({
-  category_id: 1,
-  name_ar: 'رخام كرارا إيطالي نخب أول',
-  name_en: 'Carrara Marble Premium',
-  description_ar: 'هذا الرخام يعتبر من أرقى وأجود أنواع الرخام الإيطالي المستورد لشركة KMW.',
-  description_en: 'This Carrara marble is directly imported from Italian quarries with premier finish.',
-  images: []
+  category_id: '',
+  name_ar: '',
+  name_en: '',
+  description_ar: '',
+  description_en: '',
+  images: [] // New uploaded File objects
 })
 
-const imagePreviews = ref([
-  { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=150&q=80', is_main: true },
-  { url: 'https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=150&q=80', is_main: false }
-])
+// Combined previews (both existing DB images and newly added local files)
+const imagePreviews = ref([])
+
+// 🔑 Helper to add Bearer Token to Headers
+const getAuthHeaders = (isMultipart = false) => {
+  const token = localStorage.getItem('token') || localStorage.getItem('access_token')
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/json',
+    ...(isMultipart && { 'Content-Type': 'multipart/form-data' })
+  }
+}
+
+// Fetch categories and product data on mount
+onMounted(async () => {
+  try {
+    const [categoriesRes, productRes] = await Promise.all([
+      axios.get('http://127.0.0.1:8000/api/v1/categories', { headers: getAuthHeaders() }),
+      axios.get(`http://127.0.0.1:8000/api/v1/products/${productId.value}`, { headers: getAuthHeaders() })
+    ])
+
+    categories.value = categoriesRes.data?.data || categoriesRes.data || []
+
+    const prod = productRes.data?.data || productRes.data
+    form.value.category_id = prod.category_id
+    form.value.name_ar = prod.name_ar
+    form.value.name_en = prod.name_en
+    form.value.description_ar = prod.description_ar
+    form.value.description_en = prod.description_en
+
+    // Load existing images into previews
+    if (prod.images && prod.images.length > 0) {
+      imagePreviews.value = prod.images.map(img => ({
+        id: img.id,
+        url: img.image_url || `http://127.0.0.1:8000/storage/${img.image_path}`,
+        is_main: Boolean(img.is_main),
+        isExisting: true
+      }))
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    if (error.response?.status === 401) {
+      alert('Your session has expired. Please log in again.')
+    }
+  } finally {
+    isLoading.value = false
+  }
+})
 
 const setAsMain = (index) => {
-  imagePreviews.value.forEach((img, idx) => { img.is_main = idx === index })
+  imagePreviews.value.forEach((img, idx) => {
+    img.is_main = idx === index
+  })
 }
 
 const handleImageUpload = (event) => {
@@ -170,16 +227,92 @@ const handleImageUpload = (event) => {
   files.forEach(file => {
     form.value.images.push(file)
     const reader = new FileReader()
-    reader.onload = (e) => { imagePreviews.value.push({ url: e.target.result, is_main: false }) }
+    reader.onload = (e) => {
+      imagePreviews.value.push({
+        url: e.target.result,
+        is_main: imagePreviews.value.length === 0, // set main if first image
+        isExisting: false,
+        fileRef: file
+      })
+    }
     reader.readAsDataURL(file)
   })
 }
 
-const removeImage = (index) => {
-  imagePreviews.value.splice(index, 1)
+/**
+ * Handle removing a single image
+ * Communicates with backend endpoint DELETE api/v1/product-images/{id} if existing
+ */
+const removeImage = async (index) => {
+  const target = imagePreviews.value[index]
+
+  // Case 1: Image exists in the database -> Send API request to delete
+  if (target.isExisting && target.id) {
+    if (!confirm('Are you sure you want to permanently delete this image from the server?')) return
+
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/v1/product-images/${target.id}`, {
+        headers: getAuthHeaders()
+      })
+
+      // Remove from preview array upon successful API response
+      imagePreviews.value.splice(index, 1)
+    } catch (error) {
+      console.error('Failed to delete image:', error.response?.data || error)
+      if (error.response?.status === 401) {
+        alert('Unauthenticated (401). Token missing or expired.')
+      } else {
+        alert(error.response?.data?.message || 'Failed to delete image from server.')
+      }
+    }
+  }
+  // Case 2: Newly uploaded file in local browser state
+  else {
+    if (target.fileRef) {
+      const fileIdx = form.value.images.indexOf(target.fileRef)
+      if (fileIdx > -1) form.value.images.splice(fileIdx, 1)
+    }
+    imagePreviews.value.splice(index, 1)
+  }
 }
 
-const handleSubmit = () => {
-  console.log('Updated perfectly matching layout and grid systems!')
+const handleSubmit = async () => {
+  isSubmitting.value = true
+
+  const formData = new FormData()
+  // Trick Laravel to accept multipart form-data for PUT requests
+  formData.append('_method', 'PUT')
+
+  formData.append('category_id', form.value.category_id)
+  formData.append('name_en', form.value.name_en)
+  formData.append('name_ar', form.value.name_ar)
+  formData.append('description_en', form.value.description_en)
+  formData.append('description_ar', form.value.description_ar)
+
+  // Pass new uploaded images
+  form.value.images.forEach((file, index) => {
+    formData.append(`new_images[${index}]`, file)
+  })
+
+  // Send layout state for main image
+  const mainImageIndex = imagePreviews.value.findIndex(img => img.is_main)
+  formData.append('main_image_index', mainImageIndex !== -1 ? mainImageIndex : 0)
+
+  try {
+    await axios.post(`http://127.0.0.1:8000/api/v1/products/${productId.value}`, formData, {
+      headers: getAuthHeaders(true)
+    })
+
+    router.push('/admin/products')
+  } catch (error) {
+    console.error('Failed to update product:', error.response?.data || error)
+    if (error.response?.status === 401) {
+      alert('Unauthenticated (401). Token missing or expired.')
+    } else {
+      alert(error.response?.data?.message || 'Failed to update product.')
+    }
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
