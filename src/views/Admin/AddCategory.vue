@@ -14,6 +14,14 @@
       </RouterLink>
     </div>
 
+    <div v-if="successMessage" class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-950 font-black text-xs uppercase tracking-wider rounded-xl text-center">
+      {{ successMessage }}
+    </div>
+
+    <div v-if="errorMessage" class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-950 font-black text-xs uppercase tracking-wider rounded-xl text-center">
+      {{ errorMessage }}
+    </div>
+
     <div class="bg-white rounded-2xl p-5 sm:p-8 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full box-border">
       <form @submit.prevent="handleSubmit" class="space-y-6">
 
@@ -122,9 +130,10 @@
           </RouterLink>
           <button
             type="submit"
-            class="w-full sm:w-auto order-1 sm:order-2 px-8 py-3.5 bg-amber-950 hover:bg-amber-900 text-white font-black text-xs rounded-xl transition-all duration-300 uppercase tracking-widest shadow-md cursor-pointer text-center"
+            :disabled="loading"
+            class="w-full sm:w-auto order-1 sm:order-2 px-8 py-3.5 bg-amber-950 hover:bg-amber-900 text-white font-black text-xs rounded-xl transition-all duration-300 uppercase tracking-widest shadow-md cursor-pointer text-center disabled:bg-amber-950/50"
           >
-            Save Category
+            {{ loading ? 'Saving...' : 'Save Category' }}
           </button>
         </div>
 
@@ -137,6 +146,8 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
+import categoryService from '@/api/categoryService' // استدعاء ملف الـ Service للربط بالباك إيند
 
 const router = useRouter()
 
@@ -151,6 +162,9 @@ const form = reactive({
 
 const fileName = ref('')
 const imagePreview = ref(null)
+const loading = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
 
 const generateSlug = () => {
   form.slug = form.name_en
@@ -169,18 +183,50 @@ const handleFileUpload = (event) => {
   }
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  loading.value = true
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  // بناء الـ FormData لإرسال الصورة كنص ثنائي (Binary) مع باقي حقول النصوص للباك إيند
   const formData = new FormData()
   formData.append('name_en', form.name_en)
   formData.append('name_ar', form.name_ar)
-  formData.append('description_en', form.description_en)
-  formData.append('description_ar', form.description_ar)
   formData.append('slug', form.slug)
-  formData.append('image_path', form.image)
 
-  console.log('FormData ready for Laravel:', form)
-  alert('Category created successfully!')
-  router.push('/admin/dashboard')
+  if (form.description_en) formData.append('description_en', form.description_en)
+  if (form.description_ar) formData.append('description_ar', form.description_ar)
+  if (form.image) {
+    formData.append('image_path', form.image) // الباك إيند يتوقع اسم الحقل image_path
+  }
+
+  try {
+    const response = await categoryService.create(formData)
+
+    successMessage.value = 'Category created successfully! 🎉'
+
+    // إعادة تهيئة الفورم بعد النجاح
+    form.name_en = ''
+    form.name_ar = ''
+    form.description_en = ''
+    form.description_ar = ''
+    form.slug = ''
+    form.image = null
+    fileName.value = ''
+    imagePreview.value = null
+
+    // توجيه الأدمن لصفحة الداشبورد بعد ثانيتين من النجاح
+    setTimeout(() => {
+      router.push('/admin/dashboard')
+    }, 2000)
+
+  } catch (error) {
+    console.error('Error creating category:', error)
+    // الإمساك الدقيق برسائل التحقق والأخطاء القادمة من لارافيل وعرضها
+    errorMessage.value = error.response?.data?.message || 'Something went wrong. Please try again.'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
