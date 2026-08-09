@@ -1,21 +1,39 @@
-import axios from 'axios';
+import axios from 'axios'
 
+// إنشاء Instance موحد لجميع طلبات مشروع KMW
 const apiClient = axios.create({
-  // الرابط الصحيح مع الـ v1 لمطابقة مسارات الـ Laravel عندك
-  baseURL: 'http://127.0.0.1:8000/api/v1/',
+  baseURL: 'http://127.0.0.1:8000/api/v1', // مسار سيرفر Laravel
   headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   }
-});
+})
 
-// الحارس اللي بيلصق التوكن تلقائياً في الطلبات المحمية بعد تسجيل الدخول
-apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// إرفاق التوكن مع كل طلب بشكل آلي عند توفره
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('auth_token') || localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
   }
-  return config;
-});
+)
 
-export default apiClient;
+// التعامل مع الأخطاء العامة (مثل انتهاء الصلاحية 401)
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('auth_token')
+      // يمكنك توجيهه لصفحة التسجيل إن أردت:
+      // window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
+
+export default apiClient

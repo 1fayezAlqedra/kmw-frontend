@@ -1,17 +1,17 @@
 <template>
-  <!-- حاوية الصفحة متزنة في المنتصف ومطابقة للـ DNA اللوني لـ image_00475d.png -->
+  <!-- حاوية الصفحة متزنة في المنتصف ومطابقة للـ DNA اللوني -->
   <div class="w-full max-w-5xl mx-auto animate-fade-in box-border bg-[#F7F4F0] min-h-screen p-4 sm:p-6 md:p-8" dir="ltr">
 
     <!-- Navigation Block (Header & Back) -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h3 class="text-xl md:text-2xl font-black text-[#0A1A2F] tracking-tight uppercase">EDIT VIDEO ASSET</h3>
-        <p class="text-xs text-[#5C728D] font-bold mt-1">Modify video record fields, streaming source or localization titles</p>
+        <p class="text-xs text-[#5C728D] font-bold mt-1">Modify video record fields, streaming source or localization titles (#{{ videoId }})</p>
       </div>
 
-      <!-- زر العودة الدائري الكامل المطابق للصورة BACK TO DASHBOARD -->
+      <!-- زر العودة الدائري الكامل BACK TO DASHBOARD -->
       <RouterLink
-        to="/admin/videos"
+        :to="{ name: 'ShowVideos' }"
         class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-white border border-[#EAE3DA] text-xs font-black text-[#0A1A2F] rounded-full transition-all duration-200 hover:bg-[#F7F4F0] shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] cursor-pointer whitespace-nowrap"
       >
         <span>← BACK TO DASHBOARD</span>
@@ -19,10 +19,16 @@
     </div>
 
     <!-- Main White Canvas Form Container -->
-    <div class="bg-white rounded-3xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
+    <div class="bg-white rounded-3xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden relative">
+
+      <!-- Loading State Overlay -->
+      <div v-if="isLoading" class="p-16 text-center text-slate-400">
+        <div class="w-8 h-8 border-2 border-[#A1461D] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+        <span class="text-xs font-bold text-[#0A1A2F]">Fetching video data for ID #{{ videoId }}...</span>
+      </div>
 
       <!-- Form Content -->
-      <form @submit.prevent="handleUpdate" class="p-6 md:p-10 space-y-6 md:space-y-8">
+      <form v-else @submit.prevent="handleUpdate" class="p-6 md:p-10 space-y-6 md:space-y-8">
 
         <!-- ROW 1: Video Titles (EN / AR) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
@@ -80,7 +86,7 @@
               v-model="form.description_en"
               rows="4"
               placeholder="e.g., Collection of natural durable igneous rocks suitable for heavy-duty countertops and flooring..."
-              class="w-full px-4 py-3 bg-white border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-[#A1461D] text-sm font-medium text-slate-400 transition-all duration-300 resize-none"
+              class="w-full px-4 py-3 bg-white border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-[#A1461D] text-sm font-medium text-slate-600 transition-all duration-300 resize-none"
               required
             ></textarea>
           </div>
@@ -94,7 +100,7 @@
               v-model="form.description_ar"
               rows="4"
               placeholder="مثال: تشكيلة من الصخور الطبيعية الصلبة المقاومة للحرارة والخدش، مثالية للمطابخ والأرضيات الخارجية..."
-              class="w-full px-4 py-3 bg-white border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-[#A1461D] text-sm font-medium text-slate-400 transition-all duration-300 resize-none font-sans text-right"
+              class="w-full px-4 py-3 bg-white border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-[#A1461D] text-sm font-medium text-slate-600 transition-all duration-300 resize-none font-sans text-right"
               required
             ></textarea>
           </div>
@@ -103,13 +109,13 @@
         <!-- ROW 4: Action Control Buttons Container -->
         <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-[#EAE3DA]/60">
           <RouterLink
-            to="/admin/videos"
+            :to="{ name: 'ShowVideos' }"
             class="w-full sm:w-auto px-6 py-3 bg-white hover:bg-[#F7F4F0] text-slate-500 border border-[#EAE3DA] text-xs font-black rounded-xl transition-all duration-200 uppercase tracking-widest text-center"
           >
             Cancel
           </RouterLink>
 
-          <!-- زر التحديث والحفظ بالدرجة البرتقالية الطوبية المحددة بالظبط rgb(161, 70, 29) -->
+          <!-- زر التحديث والحفظ -->
           <button
             type="submit"
             :disabled="isSubmitting"
@@ -127,9 +133,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import apiClient from '@/api/api'
 
 const router = useRouter()
 const route = useRoute()
+
+const videoId = route.params.id
+const isLoading = ref(true)
 const isSubmitting = ref(false)
 
 const form = ref({
@@ -140,45 +150,53 @@ const form = ref({
   description_ar: ''
 })
 
-// محاكاة جلب البيانات بناءً على معرف الفيديو القادم من الـ URL Route
-onMounted(async () => {
-  const videoId = route.params.id
-  console.log('Fetching database record for video ID:', videoId)
-
-  // هنا نقوم بملء الحقول تلقائياً لمحاكاة استجابة الـ API
-  form.value = {
-    title_en: 'Carrara Production & Showreel Showcase',
-    title_ar: 'إنتاج رخام كرارا وعرض فني متكامل للشركات',
-    youtube_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    description_en: 'Elite selection of clean white background with strong, iconic grey tectonic marble veins.',
-    description_ar: 'خامة فاخرة ذات خلفية بيضاء ناصعة وعروق رمادية واضحة ومميزة للفخامة.'
+// جلب بيانات الفيديو الحقيقية من الـ API بـ ID الفيديو
+const fetchVideoDetails = async () => {
+  if (!videoId) {
+    console.error('Video ID is missing!')
+    router.push({ name: 'ShowVideos' })
+    return
   }
-})
+
+  isLoading.value = true
+  try {
+    const response = await apiClient.get(`/videos/${videoId}`)
+    const videoData = response.data.data || response.data
+
+    // تعبئة النموذج بالبيانات القادمة من الباك إيند
+    form.value = {
+      title_en: videoData.title_en || '',
+      title_ar: videoData.title_ar || '',
+      youtube_url: videoData.youtube_url || '',
+      description_en: videoData.description_en || '',
+      description_ar: videoData.description_ar || ''
+    }
+  } catch (error) {
+    console.error('Failed to fetch video details:', error)
+    alert('Failed to load video data from server.')
+    router.push({ name: 'ShowVideos' })
+  } finally {
+    isLoading.value = false
+  }
+}
 
 const handleUpdate = async () => {
   isSubmitting.value = true
   try {
-    const data = new FormData()
-    // Laravel يستقبل تحديث الـ FormData عبر ميثود الـ PUT باستخدام الـ Method Spoofing
-    data.append('_method', 'PUT')
-
-    data.append('title_en', form.value.title_en)
-    data.append('title_ar', form.value.title_ar)
-    data.append('youtube_url', form.value.youtube_url)
-    data.append('description_en', form.value.description_en)
-    data.append('description_ar', form.value.description_ar)
-
-    console.log('FormData Update Payload Triggered:', Object.fromEntries(data))
-
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    // بعد الحفظ بنجاح يعود لصفحة الجدول الـ Show
-    router.push('/admin/videos')
+    // إرسال التحديث الحقيقي لـ Laravel API
+    await apiClient.put(`/videos/${videoId}`, form.value)
+    router.push({ name: 'ShowVideos' })
   } catch (error) {
-    console.error(error)
+    console.error('Error updating video:', error)
+    alert('Failed to save changes. Please try again.')
   } finally {
     isSubmitting.value = false
   }
 }
+
+onMounted(() => {
+  fetchVideoDetails()
+})
 </script>
 
 <style scoped>
