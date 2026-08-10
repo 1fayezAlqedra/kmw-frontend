@@ -1,6 +1,7 @@
 <template>
   <div class="w-full mx-auto animate-fade-in box-border bg-[#F7F4F0] min-h-screen p-4 sm:p-6 md:p-8" dir="ltr">
 
+    <!-- Top Action Bar -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h4 class="text-lg md:text-2xl font-black text-slate-900 tracking-wide uppercase">Edit Marble Project</h4>
@@ -15,15 +16,39 @@
       </RouterLink>
     </div>
 
+    <!-- Form Container -->
     <div class="bg-white rounded-2xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
 
+      <!-- Loading State -->
       <div v-if="isLoadingData" class="p-20 flex flex-col items-center justify-center space-y-4">
         <div class="w-8 h-8 border-4 border-[#E2D9CD] border-t-amber-950 rounded-full animate-spin"></div>
         <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Fetching Project Details...</p>
       </div>
 
+      <!-- Main Form -->
       <form v-else @submit.prevent="handleSubmit" class="p-5 md:p-8 space-y-6 md:space-y-8" enctype="multipart/form-data">
 
+        <!-- Category Selection -->
+        <div class="flex flex-col space-y-2">
+          <label class="text-xs font-black text-slate-400 uppercase tracking-wider">Project Category <span class="text-red-500">*</span></label>
+          <div class="relative">
+            <select
+              v-model="form.category_id"
+              class="w-full px-4 py-3 bg-[#F7F4F0]/50 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white text-sm font-bold text-slate-800 transition-all duration-300 appearance-none cursor-pointer"
+              required
+            >
+              <option value="" disabled>Select Category</option>
+              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                {{ cat.name_en || cat.name || `Category #${cat.id}` }}
+              </option>
+            </select>
+            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+              ▼
+            </div>
+          </div>
+        </div>
+
+        <!-- Titles Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
           <div class="flex flex-col space-y-2">
             <label class="text-xs font-black text-slate-400 uppercase tracking-wider">Project Title (English) <span class="text-red-500">*</span></label>
@@ -46,6 +71,7 @@
           </div>
         </div>
 
+        <!-- Descriptions Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
           <div class="flex flex-col space-y-2">
             <label class="text-xs font-black text-slate-400 uppercase tracking-wider">Description (English) <span class="text-red-500">*</span></label>
@@ -68,21 +94,14 @@
           </div>
         </div>
 
-        <div class="flex flex-col space-y-2">
-          <label class="text-xs font-black text-slate-400 uppercase tracking-wider">Showcase Video URL (Optional)</label>
-          <input
-            type="url"
-            v-model="form.video_url"
-            class="w-full px-4 py-3 bg-[#F7F4F0]/50 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white text-sm font-medium text-slate-800 transition-all duration-300"
-          />
-        </div>
-
+        <!-- Media Gallery Box -->
         <div class="bg-[#F7F4F0]/40 border border-[#EAE3DA] rounded-2xl p-4 sm:p-6 md:p-8 space-y-6">
           <div>
             <h5 class="text-sm md:text-base font-black text-slate-900 uppercase tracking-wide">Project Images Album</h5>
             <p class="text-xs text-slate-400 font-bold mt-0.5">Manage existing photos or inject new ones to the collection</p>
           </div>
 
+          <!-- Existing Images Grid -->
           <div v-if="existingImages.length > 0" class="space-y-2">
             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Active Gallery Photos</label>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -91,13 +110,13 @@
                 :key="img.id"
                 class="relative aspect-[4/3] rounded-xl border border-[#EAE3DA] bg-white p-1.5 shadow-xs group overflow-hidden"
               >
-                <img :src="img.image_path" class="w-full h-full object-cover rounded-lg" />
+                <img :src="getImageFullUrl(img.image_path)" class="w-full h-full object-cover rounded-lg" @error="handleImageError" />
                 <div class="absolute inset-0 bg-amber-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-200">
                   <button
                     type="button"
-                    @click="removeExistingImage(img.id)"
+                    @click="markImageForDeletion(img.id)"
                     class="bg-white text-red-600 p-2 rounded-xl shadow-md hover:scale-105 active:scale-95 transition cursor-pointer"
-                    title="Delete permanently from server"
+                    title="Remove Image"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -108,6 +127,7 @@
             </div>
           </div>
 
+          <!-- File Upload Zone for New Images -->
           <div class="space-y-2">
             <label class="text-[10px] font-black text-amber-900 uppercase tracking-widest block">Upload New Photos Bundle</label>
             <div
@@ -135,6 +155,7 @@
             </div>
           </div>
 
+          <!-- Previews for Newly Queued Images -->
           <div v-if="newPreviews.length > 0" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pt-2">
             <div
               v-for="(url, index) in newPreviews"
@@ -158,6 +179,7 @@
           </div>
         </div>
 
+        <!-- Form Action Controls -->
         <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-[#EAE3DA]/60">
           <RouterLink
             to="/admin/projects"
@@ -182,6 +204,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import api from '@/api/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -192,61 +215,76 @@ const isDragging = ref(false)
 
 const projectId = route.params.id
 
+const storageBaseUrl = 'http://127.0.0.1:8000/storage/'
+const fallbackImage = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>'
+
+const categories = ref([])
+
 const form = ref({
+  category_id: '',
   name_en: '',
   name_ar: '',
   description_en: '',
-  description_ar: '',
-  video_url: ''
+  description_ar: ''
 })
 
 const existingImages = ref([])
+const deletedImageIds = ref([])
 const newFiles = ref([])
 const newPreviews = ref([])
 
+const getImageFullUrl = (path) => {
+  if (!path) return fallbackImage
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${storageBaseUrl}${path}`
+}
+
+const handleImageError = (e) => {
+  e.target.src = fallbackImage
+}
+
+// جلب الأقسام لتعبئة الـ Dropdown
+const fetchCategories = async () => {
+  try {
+    const res = await api.get('/categories')
+    categories.value = res.data?.data || res.data
+  } catch (err) {
+    console.error('Failed to fetch categories:', err)
+  }
+}
+
+// جلب تفاصيل المشروع
 const fetchProjectDetails = async () => {
   isLoadingData.value = true
   try {
-    await new Promise(resolve => setTimeout(resolve, 800))
+    const response = await api.get(`/projects/${projectId}`)
+    const project = response.data?.data || response.data
 
-    const mockData = {
-      id: projectId,
-      name_en: 'Imperial Statuario Penthouse',
-      name_ar: 'بنتهاوس رخام ستاتواريو الإمبراطوري',
-      description_en: 'Full floor vein matching design layout with custom bookmatch integration.',
-      description_ar: 'تصميم أرضيات متناسق العروق مع دمج لوحات رخامية متطابقة بالكامل.',
-      video_url: 'https://youtube.com/watch?v=KMW123',
-      images: [
-        { id: 101, image_path: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80' },
-        { id: 102, image_path: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=400&q=80' }
-      ]
-    }
+    form.value.category_id = project.category_id || project.category?.id || ''
+    form.value.name_en = project.name_en || ''
+    form.value.name_ar = project.name_ar || ''
+    form.value.description_en = project.description_en || ''
+    form.value.description_ar = project.description_ar || ''
 
-    form.value.name_en = mockData.name_en
-    form.value.name_ar = mockData.name_ar
-    form.value.description_en = mockData.description_en
-    form.value.description_ar = mockData.description_ar
-    form.value.video_url = mockData.video_url
-
-    existingImages.value = [...mockData.images]
-
+    existingImages.value = project.images || []
   } catch (error) {
-    console.error('Failed to resolve project assets:', error)
+    console.error('Failed to fetch project details:', error)
+    alert(error.response?.data?.message || 'Failed to fetch project details.')
+    router.push('/admin/projects')
   } finally {
     isLoadingData.value = false
   }
 }
 
-const removeExistingImage = async (imageId) => {
-  if (confirm('Are you sure you want to delete this photo permanently from the database?')) {
-    try {
-      existingImages.value = existingImages.value.filter(img => img.id !== imageId)
-    } catch (error) {
-      console.error(error)
-    }
+// التجهيز لحذف الصورة السيرفرية
+const markImageForDeletion = (imageId) => {
+  if (confirm('Are you sure you want to remove this photo?')) {
+    deletedImageIds.value.push(imageId)
+    existingImages.value = existingImages.value.filter(img => img.id !== imageId)
   }
 }
 
+// إداريات الرفع الجديد
 const handleFileSelect = (e) => { addFiles(e.target.files) }
 const handleDrop = (e) => { isDragging.value = false; addFiles(e.dataTransfer.files) }
 
@@ -265,39 +303,49 @@ const removeNewImage = (index) => {
   newPreviews.value.splice(index, 1)
 }
 
+// حفظ التعديلات وإرسال البيانات
 const handleSubmit = async () => {
   isSubmitting.value = true
   try {
     const data = new FormData()
 
+    data.append('category_id', form.value.category_id)
     data.append('name_en', form.value.name_en)
     data.append('name_ar', form.value.name_ar)
     data.append('description_en', form.value.description_en)
     data.append('description_ar', form.value.description_ar)
 
-    if (form.value.video_url) {
-      data.append('video_url', form.value.video_url)
-    }
-
+    // Method Spoofing لارافل
     data.append('_method', 'PUT')
 
+    // إرسال معرفات الصور المراد حذفها من السيرفر
+    deletedImageIds.value.forEach((id, index) => {
+      data.append(`deleted_images[${index}]`, id)
+    })
+
+    // إرفاق الصور الجديده
     newFiles.value.forEach((file, index) => {
       data.append(`images[${index}]`, file)
     })
 
-    console.log('Sending Update FormData via Method Spoofing:', data)
+    await api.post(`/projects/${projectId}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
 
-    await new Promise(resolve => setTimeout(resolve, 1000))
     router.push('/admin/projects')
   } catch (error) {
-    console.error(error)
+    console.error('Error updating project:', error)
+    alert(error.response?.data?.message || 'Failed to save project updates.')
   } finally {
     isSubmitting.value = false
   }
 }
 
-onMounted(() => {
-  fetchProjectDetails()
+onMounted(async () => {
+  await fetchCategories()
+  await fetchProjectDetails()
 })
 </script>
 
