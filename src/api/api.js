@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // إنشاء Instance موحد لجميع طلبات مشروع KMW
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/v1', // مسار سيرفر Laravel
+  baseURL: 'http://127.0.0.1:8000/api/v1',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -23,13 +23,16 @@ apiClient.interceptors.request.use(
   }
 )
 
-// التعامل مع الأخطاء العامة (مثل انتهاء الصلاحية 401)
+// معالجة الاستجابة والأخطاء العامة
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // تبسيط الاستجابة لاسترجاع payload الـ API مباشرة بدون غلاف Axios
+    return response.data
+  },
   (error) => {
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('auth_token')
-      // يمكنك توجيهه لصفحة التسجيل إن أردت:
+      localStorage.removeItem('token')
       // window.location.href = '/login'
     }
     return Promise.reject(error)

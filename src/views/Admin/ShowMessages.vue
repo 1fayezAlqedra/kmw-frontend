@@ -28,19 +28,19 @@
         </div>
         <div class="flex flex-col items-center justify-center my-2 space-y-2">
           <div class="p-2.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200/60 relative">
-            <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
+            <span v-if="unreadCount > 0" class="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 19v-8.93a2 2 0 01.89-1.664l8-4.8a2 2 0 012.22 0l8 4.8A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5" />
             </svg>
           </div>
           <h3 class="text-4xl font-black text-amber-700 tracking-tight">{{ unreadCount }}</h3>
         </div>
-        <div class="text-center text-[11px] text-amber-800 font-extrabold uppercase tracking-wider animate-pulse">
+        <div class="text-center text-[11px] text-amber-800 font-extrabold uppercase tracking-wider">
           Requires Attention
         </div>
       </div>
 
-      <!-- Read Messages Card (جديد) -->
+      <!-- Read Messages Card -->
       <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[180px] relative overflow-hidden">
         <div class="text-center">
           <p class="text-[11px] text-slate-500 font-black uppercase tracking-[0.2em]">Read Inquiries</p>
@@ -76,7 +76,7 @@
         />
       </div>
 
-      <!-- Time Filter Dropdown (جديد ومنطقي) -->
+      <!-- Time Filter Dropdown -->
       <div class="relative w-full lg:w-56">
         <select
           v-model="timeFilter"
@@ -115,7 +115,7 @@
       </div>
     </div>
 
-    <!-- --- Messages Table Container (Responsive Wrapper) --- -->
+    <!-- --- Messages Table Container --- -->
     <div class="bg-white rounded-2xl p-4 sm:p-8 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-x-auto block">
       <div class="min-w-[1000px] w-full">
 
@@ -129,20 +129,20 @@
         </div>
 
         <!-- Empty State -->
-        <div v-if="filteredMessages.length === 0" class="py-16 text-center flex flex-col items-center justify-center space-y-4">
+        <div v-if="filteredMessages.length === 0" class="py-20 text-center flex flex-col items-center justify-center space-y-4">
           <div class="p-4 bg-[#F7F4F0] text-slate-400 rounded-full border border-[#EAE3DA]">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-amber-900/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0l-3.586-3.586a2 2 0 00-2.828 0L12 14m0 0l-3.586-3.586a2 2 0 00-2.828 0L4 13" />
             </svg>
           </div>
           <div>
             <h5 class="text-base font-black text-slate-800 uppercase tracking-wide">No Messages Found</h5>
-            <p class="text-xs text-slate-400 font-bold mt-1">Try adjusting your search criteria or filters</p>
+            <p class="text-xs text-slate-400 font-bold mt-1">There are currently no client messages available in the database.</p>
           </div>
         </div>
 
         <!-- Table Rows -->
-        <div class="divide-y divide-[#EAE3DA]/50 w-full flex flex-col">
+        <div v-else class="divide-y divide-[#EAE3DA]/50 w-full flex flex-col">
           <div
             v-for="msg in filteredMessages"
             :key="msg.id"
@@ -170,7 +170,7 @@
             </div>
 
             <!-- Message Body Snippet -->
-            <div class="col-span-4 pr-6">
+            <div class="col-span-4 pr-6 flex flex-col space-y-1.5">
               <p :class="['text-sm truncate', msg.isUnread ? 'text-slate-900 font-bold' : 'text-slate-500 font-medium']">
                 {{ msg.content }}
               </p>
@@ -212,169 +212,193 @@
     </div>
 
     <!-- --- Message Detail Modal --- -->
-    <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div @click="closeModal" class="absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity"></div>
+    <Teleport to="body">
+      <div v-if="isModalOpen" class="fixed inset-0 top-0 left-0 z-[9999] w-screen h-screen flex items-center justify-center p-4 bg-black/40 backdrop-blur-[2px]">
+        <div @click="closeModal" class="absolute inset-0 w-full h-full"></div>
 
-      <div class="bg-[#F7F4F0] rounded-2xl border border-[#EAE3DA] shadow-2xl w-full max-w-lg overflow-hidden z-10 animate-scale-up flex flex-col justify-between max-h-[90vh]">
-        <div class="px-6 py-5 bg-white border-b border-[#EAE3DA] flex items-center justify-between">
-          <div>
-            <h3 class="text-lg font-black text-slate-900 uppercase tracking-wide">Message Details</h3>
-            <p class="text-[10px] text-amber-800 font-extrabold tracking-widest uppercase mt-0.5">KMW Platform Inquiry</p>
-          </div>
-          <button @click="closeModal" class="w-8 h-8 bg-[#F7F4F0] hover:bg-slate-200 text-slate-500 hover:text-slate-900 rounded-xl flex items-center justify-center cursor-pointer border border-[#E2D9CD] transition-all text-sm">
-            ✕
-          </button>
-        </div>
-
-        <div class="p-6 space-y-5 overflow-y-auto no-scrollbar flex-1">
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white p-3.5 rounded-xl border border-[#EAE3DA]/70">
-              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Sender Client</span>
-              <span class="text-sm font-black text-slate-900 block truncate">{{ selectedMessage?.clientName }}</span>
+        <div class="bg-[#F7F4F0] rounded-2xl border border-[#EAE3DA] shadow-2xl w-full max-w-lg overflow-hidden relative z-10 animate-scale-up flex flex-col justify-between max-h-[85vh]">
+          <div class="px-6 py-5 bg-white border-b border-[#EAE3DA] flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-black text-slate-900 uppercase tracking-wide">Message Details</h3>
+              <p class="text-[10px] text-amber-800 font-extrabold tracking-widest uppercase mt-0.5">KMW Platform Inquiry</p>
             </div>
-            <div class="bg-white p-3.5 rounded-xl border border-[#EAE3DA]/70">
-              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Timeline Received</span>
-              <span class="text-sm font-bold text-amber-900 block truncate">{{ selectedMessage?.dateLabel }}</span>
-            </div>
+            <button @click="closeModal" class="w-8 h-8 bg-[#F7F4F0] hover:bg-slate-200 text-slate-500 hover:text-slate-900 rounded-xl flex items-center justify-center cursor-pointer border border-[#E2D9CD] transition-all text-sm">
+              ✕
+            </button>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white p-4 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-1">
-              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider">Email Address</span>
-              <a :href="`mailto:${selectedMessage?.clientEmail}`" class="text-sm font-bold text-amber-950 hover:underline break-all truncate">
-                {{ selectedMessage?.clientEmail }}
-              </a>
+          <div class="p-6 space-y-5 overflow-y-auto no-scrollbar flex-1">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white p-3.5 rounded-xl border border-[#EAE3DA]/70">
+                <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Sender Client</span>
+                <span class="text-sm font-black text-slate-900 block truncate">{{ selectedMessage?.clientName }}</span>
+              </div>
+              <div class="bg-white p-3.5 rounded-xl border border-[#EAE3DA]/70">
+                <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider mb-1">Timeline Received</span>
+                <span class="text-sm font-bold text-amber-900 block truncate">{{ selectedMessage?.dateLabel }}</span>
+              </div>
             </div>
-            <div class="bg-white p-4 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-1">
-              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider">Phone Number</span>
-              <a :href="`tel:${selectedMessage?.clientPhone}`" class="text-sm font-bold text-amber-950 hover:underline break-all truncate">
-                {{ selectedMessage?.clientPhone }}
-              </a>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white p-4 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-1">
+                <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider">Email Address</span>
+                <a :href="getMailtoLink(selectedMessage?.clientEmail)" class="text-sm font-bold text-amber-950 hover:underline break-all truncate">
+                  {{ selectedMessage?.clientEmail }}
+                </a>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-1">
+                <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider">Phone Number</span>
+                <a :href="`tel:${selectedMessage?.clientPhone}`" class="text-sm font-bold text-amber-950 hover:underline break-all truncate">
+                  {{ selectedMessage?.clientPhone }}
+                </a>
+              </div>
+            </div>
+
+            <!-- Full Message Content -->
+            <div class="bg-white p-5 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-2 min-h-[120px]">
+              <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider border-b border-[#F7F4F0] pb-1">Full Message Content</span>
+              <p class="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-wrap">
+                {{ selectedMessage?.content }}
+              </p>
             </div>
           </div>
 
-          <div class="bg-white p-5 rounded-xl border border-[#EAE3DA]/70 flex flex-col space-y-2 min-h-[140px]">
-            <span class="block text-[10px] text-slate-400 font-black uppercase tracking-wider border-b border-[#F7F4F0] pb-1">Full Message Content</span>
-            <p class="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-wrap">
-              {{ selectedMessage?.content }}
-            </p>
-          </div>
-        </div>
+          <div class="px-6 py-4 bg-white border-t border-[#EAE3DA] flex items-center justify-end space-x-3">
+            <button @click="closeModal" class="px-5 py-3 bg-[#F7F4F0] hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl border border-[#E2D9CD] transition-all uppercase tracking-widest cursor-pointer shadow-xs">
+              Close
+            </button>
 
-        <div class="px-6 py-4 bg-white border-t border-[#EAE3DA] flex items-center justify-end space-x-3">
-          <button @click="closeModal" class="px-5 py-3 bg-[#F7F4F0] hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl border border-[#E2D9CD] transition-all uppercase tracking-widest cursor-pointer shadow-xs">
-            Close
-          </button>
-          <a :href="`mailto:${selectedMessage?.clientEmail}?subject=Regarding your inquiry to KMW Marble`" class="px-6 py-3 bg-amber-950 hover:bg-amber-900 text-white font-black text-xs rounded-xl transition-all uppercase tracking-widest shadow-md text-center block">
-            Reply via Email
-          </a>
+            <a
+              :href="getReplyMailtoLink(selectedMessage)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-6 py-3 bg-amber-950 hover:bg-amber-900 text-white font-black text-xs rounded-xl transition-all uppercase tracking-widest shadow-md text-center block cursor-pointer"
+            >
+              Reply via Email
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+    </Teleport>
 
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import apiClient from '@/api/api'
 
-// داتا مهيأة بالكامل لاختبار الفلتر الزمني والـ Dropdown بدقة
-const messages = ref([
-  {
-    id: 1,
-    clientName: 'John Doe',
-    clientEmail: 'john@example.com',
-    clientPhone: '+1 (555) 234-5678',
-    content: 'Interested in Carrara Marble slabs for a luxury villa project. I need detailed pricing regarding premium selections, expected production lead time, and shipping facilities directly to Dubai.',
-    dateLabel: '2 hours ago',
-    created_at: new Date(new Date().getTime() - 2 * 60 * 60 * 1000), // منذ ساعتين (أقل من 24 ساعة)
-    isUnread: true
-  },
-  {
-    id: 2,
-    clientName: 'Sarah Smith',
-    clientEmail: 'sarah.s@design.com',
-    clientPhone: '+1 (555) 876-5432',
-    content: 'Requesting the latest wholesale catalog for interior designers. We have multiple upcoming residential complexes looking for top-tier marble supplier alternatives.',
-    dateLabel: '3 days ago',
-    created_at: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // منذ 3 أيام (أقل من أسبوع)
-    isUnread: false
-  },
-  {
-    id: 3,
-    clientName: 'Michael Chang',
-    clientEmail: 'm.chang@builders.io',
-    clientPhone: '+852 9876 5432',
-    content: 'Do you offer customized cutting options for large architectural cut-to-size formats? We have specific requirements for a commercial lobby wall cladding concept.',
-    dateLabel: '3 weeks ago',
-    created_at: new Date(new Date().getTime() - 21 * 24 * 60 * 60 * 1000), // منذ 3 أسابيع (أقل من شهر)
-    isUnread: true
-  },
-  {
-    id: 4,
-    clientName: 'Elena Rostova',
-    clientEmail: 'elena.r@luxury.ru',
-    clientPhone: '+7 (903) 123-4567',
-    content: 'Looking for a reliable supplier of Calacatta Gold for our hotel project in Moscow. Please provide available blocks and slab dimensions.',
-    dateLabel: '5 months ago',
-    created_at: new Date(new Date().getTime() - 150 * 24 * 60 * 60 * 1000), // منذ 5 أشهر (داخل السنة)
-    isUnread: false
-  }
-])
-
+const messages = ref([])
+const isLoading = ref(false)
 const searchQuery = ref('')
 const statusFilter = ref('all')
-const timeFilter = ref('all') // 'all', '24h', 'week', 'month', 'year'
+const timeFilter = ref('all')
 const isModalOpen = ref(false)
 const selectedMessage = ref(null)
 
-// إحصائيات الكروت الذكية
+const formatMessage = (msg) => {
+  return {
+    id: msg.id,
+    clientName: msg.name,
+    clientEmail: msg.email,
+    clientPhone: msg.phone || 'N/A',
+    content: msg.message,
+    isUnread: !msg.is_read,
+    created_at: msg.created_at,
+    dateLabel: msg.created_at ? new Date(msg.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'
+  }
+}
+
+const fetchMessages = async () => {
+  try {
+    isLoading.value = true
+    const res = await apiClient.get('/contact')
+
+    const rawData = res.data ? res.data : res
+    if (Array.isArray(rawData)) {
+      messages.value = rawData.map(formatMessage)
+    } else if (rawData && rawData.data) {
+      messages.value = rawData.data.map(formatMessage)
+    }
+  } catch (error) {
+    console.error('Failed to fetch contact messages:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchMessages()
+})
+
 const unreadCount = computed(() => messages.value.filter(m => m.isUnread).length)
 const readCount = computed(() => messages.value.filter(m => !m.isUnread).length)
 
-// الفلترة الشاملة
 const filteredMessages = computed(() => {
   const now = new Date()
 
   return messages.value.filter(msg => {
-    // 1. فلتر البحث
-    const matchesSearch = msg.clientName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                          msg.clientEmail.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const nameMatch = msg.clientName ? msg.clientName.toLowerCase().includes(searchQuery.value.toLowerCase()) : false
+    const emailMatch = msg.clientEmail ? msg.clientEmail.toLowerCase().includes(searchQuery.value.toLowerCase()) : false
+    const matchesSearch = nameMatch || emailMatch
 
-    // 2. فلتر الحالة
     let matchesStatus = true
     if (statusFilter.value === 'unread') matchesStatus = msg.isUnread
     if (statusFilter.value === 'read') matchesStatus = !msg.isUnread
 
-    // 3. فلتر الوقت الدقيق (Dropdown)
     let matchesTime = true
-    const diffTime = Math.abs(now - msg.created_at)
-    const diffHours = diffTime / (1000 * 60 * 60)
-    const diffDays = diffHours / 24
+    if (msg.created_at) {
+      const msgDate = new Date(msg.created_at)
+      const diffHours = Math.abs(now - msgDate) / (1000 * 60 * 60)
+      const diffDays = diffHours / 24
 
-    if (timeFilter.value === '24h') matchesTime = diffHours <= 24
-    if (timeFilter.value === 'week') matchesTime = diffDays <= 7
-    if (timeFilter.value === 'month') matchesTime = diffDays <= 30
-    if (timeFilter.value === 'year') matchesTime = diffDays <= 365
+      if (timeFilter.value === '24h') matchesTime = diffHours <= 24
+      if (timeFilter.value === 'week') matchesTime = diffDays <= 7
+      if (timeFilter.value === 'month') matchesTime = diffDays <= 30
+      if (timeFilter.value === 'year') matchesTime = diffDays <= 365
+    }
 
     return matchesSearch && matchesStatus && matchesTime
   })
 })
 
-const toggleReadStatus = (id) => {
+const toggleReadStatus = async (id) => {
   const msg = messages.value.find(m => m.id === id)
-  if (msg) msg.isUnread = !msg.isUnread
+  if (!msg) return
+
+  msg.isUnread = !msg.isUnread
+
+  try {
+    await apiClient.patch(`/contact/${id}/toggle-read`)
+  } catch (error) {
+    console.error('Failed to update status on server:', error)
+    msg.isUnread = !msg.isUnread
+  }
 }
 
 const openModal = (msg) => {
   selectedMessage.value = msg
   isModalOpen.value = true
-  msg.isUnread = false
+  if (msg.isUnread) {
+    toggleReadStatus(msg.id)
+  }
 }
 
 const closeModal = () => {
   isModalOpen.value = false
   selectedMessage.value = null
+}
+
+const getMailtoLink = (email) => {
+  if (!email) return '#'
+  return `mailto:${email}`
+}
+
+const getReplyMailtoLink = (msg) => {
+  if (!msg || !msg.clientEmail) return '#'
+  const subject = encodeURIComponent(`Regarding your inquiry - KMW Platform`)
+  const body = encodeURIComponent(`Hi ${msg.clientName || 'there'},\n\nThank you for reaching out to KMW Platform.\n\nBest regards,`)
+  return `mailto:${msg.clientEmail}?subject=${subject}&body=${body}`
 }
 </script>
 
