@@ -13,7 +13,10 @@
           <div class="p-2.5 rounded-xl bg-[#F7F4F0] text-amber-900 border border-[#EAE3DA]/60">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
           </div>
-          <h3 class="text-4xl font-black text-slate-900 tracking-tight">12</h3>
+          <h3 class="text-4xl font-black text-slate-900 tracking-tight">
+            <span v-if="loading.stats" class="animate-pulse">...</span>
+            <span v-else>{{ stats.categories }}</span>
+          </h3>
         </div>
         <RouterLink to="/admin/categories" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Categories
@@ -29,7 +32,10 @@
           <div class="p-2.5 rounded-xl bg-[#F7F4F0] text-amber-900 border border-[#EAE3DA]/60">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4" /></svg>
           </div>
-          <h3 class="text-4xl font-black text-slate-900 tracking-tight">148</h3>
+          <h3 class="text-4xl font-black text-slate-900 tracking-tight">
+            <span v-if="loading.stats" class="animate-pulse">...</span>
+            <span v-else>{{ stats.products }}</span>
+          </h3>
         </div>
         <RouterLink to="/admin/products" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Products
@@ -45,7 +51,10 @@
           <div class="p-2.5 rounded-xl bg-[#F7F4F0] text-amber-900 border border-[#EAE3DA]/60">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
           </div>
-          <h3 class="text-4xl font-black text-slate-900 tracking-tight">24</h3>
+          <h3 class="text-4xl font-black text-slate-900 tracking-tight">
+            <span v-if="loading.stats" class="animate-pulse">...</span>
+            <span v-else>{{ stats.projects }}</span>
+          </h3>
         </div>
         <RouterLink to="/admin/projects" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Projects
@@ -59,9 +68,12 @@
         </div>
         <div class="flex flex-col items-center justify-center my-2 space-y-2">
           <div class="p-2.5 rounded-xl bg-[#F7F4F0] text-amber-900 border border-[#EAE3DA]/60">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 022 2z" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 0 0 2 2z" /></svg>
           </div>
-          <h3 class="text-4xl font-black text-slate-900 tracking-tight">16</h3>
+          <h3 class="text-4xl font-black text-slate-900 tracking-tight">
+            <span v-if="loading.stats" class="animate-pulse">...</span>
+            <span v-else>{{ stats.videos }}</span>
+          </h3>
         </div>
         <RouterLink to="/admin/videos" class="w-full py-3.5 bg-[#F7F4F0]/70 hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border border-[#E2D9CD] transition-all duration-300 uppercase tracking-widest cursor-pointer shadow-sm text-center block">
           View Videos
@@ -94,28 +106,39 @@
           <div class="col-span-2 text-right">Action</div>
         </div>
 
+        <!-- Loading State -->
+        <div v-if="loading.messages" class="py-12 text-center text-slate-400 font-bold text-sm">
+          Loading recent messages...
+        </div>
+
+        <!-- Empty State -->
+        <div v-else-if="recentMessages.length === 0" class="py-12 text-center text-slate-400 font-bold text-sm">
+          No messages received yet.
+        </div>
+
         <!-- Table Body -->
-        <div class="divide-y divide-[#EAE3DA]/50 w-full flex flex-col">
-
-          <!-- Message Row 1 -->
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 py-5 md:py-6 items-center hover:bg-[#F7F4F0]/20 transition-colors duration-200 rounded-xl md:rounded-none px-2 md:px-4">
-
+        <div v-else class="divide-y divide-[#EAE3DA]/50 w-full flex flex-col">
+          <div
+            v-for="msg in recentMessages"
+            :key="msg.id"
+            class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 py-5 md:py-6 items-center hover:bg-[#F7F4F0]/20 transition-colors duration-200 rounded-xl md:rounded-none px-2 md:px-4"
+          >
             <div class="col-span-1 md:col-span-3 flex flex-col space-y-1">
-              <span class="text-base font-black text-slate-900 truncate">John Doe</span>
-              <a href="mailto:john@example.com" class="text-xs text-slate-400 hover:text-amber-900 font-bold transition-colors underline decoration-dotted underline-offset-4 truncate break-all">
-                john@example.com
+              <span class="text-base font-black text-slate-900 truncate">{{ msg.name }}</span>
+              <a :href="`mailto:${msg.email}`" class="text-xs text-slate-400 hover:text-amber-900 font-bold transition-colors underline decoration-dotted underline-offset-4 truncate break-all">
+                {{ msg.email }}
               </a>
             </div>
 
             <div class="col-span-1 md:col-span-5 pr-2">
               <p class="text-sm text-slate-600 font-medium leading-relaxed md:truncate">
-                Interested in Carrara Marble slabs for a luxury villa project...
+                {{ msg.message }}
               </p>
             </div>
 
             <div class="col-span-1 md:col-span-2 text-left md:text-center">
               <span class="inline-block text-[11px] text-amber-900 font-black uppercase tracking-widest bg-[#F7F4F0] px-2.5 py-1 rounded-lg border border-[#E2D9CD]/70">
-                2 hours ago
+                {{ formatDate(msg.created_at) }}
               </span>
             </div>
 
@@ -124,39 +147,7 @@
                 Open Message
               </RouterLink>
             </div>
-
           </div>
-
-          <!-- Message Row 2 -->
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 py-5 md:py-6 items-center hover:bg-[#F7F4F0]/20 transition-colors duration-200 rounded-xl md:rounded-none px-2 md:px-4">
-
-            <div class="col-span-1 md:col-span-3 flex flex-col space-y-1">
-              <span class="text-base font-black text-slate-900 truncate">Sarah Smith</span>
-              <a href="mailto:sarah.s@design.com" class="text-xs text-slate-400 hover:text-amber-900 font-bold transition-colors underline decoration-dotted underline-offset-4 truncate break-all">
-                sarah.s@design.com
-              </a>
-            </div>
-
-            <div class="col-span-1 md:col-span-5 pr-2">
-              <p class="text-sm text-slate-600 font-medium leading-relaxed md:truncate">
-                Requesting the latest wholesale catalog for interior designers.
-              </p>
-            </div>
-
-            <div class="col-span-1 md:col-span-2 text-left md:text-center">
-              <span class="inline-block text-[11px] text-amber-900 font-black uppercase tracking-widest bg-[#F7F4F0] px-2.5 py-1 rounded-lg border border-[#E2D9CD]/70">
-                Yesterday
-              </span>
-            </div>
-
-            <div class="col-span-1 md:col-span-2 text-right w-full">
-              <RouterLink to="/admin/messages" class="w-full md:w-auto px-6 py-3.5 bg-white hover:bg-amber-950 text-slate-800 hover:text-white font-black text-xs rounded-xl border-2 border-[#E2D9CD] hover:border-amber-950 transition-all duration-300 uppercase tracking-widest shadow-sm cursor-pointer text-center block">
-                Open Message
-              </RouterLink>
-            </div>
-
-          </div>
-
         </div>
 
       </div>
@@ -165,6 +156,78 @@
 
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import api from '@/api/api'
+
+const stats = ref({
+  categories: 0,
+  products: 0,
+  projects: 0,
+  videos: 0
+})
+
+const recentMessages = ref([])
+const loading = ref({
+  stats: true,
+  messages: true
+})
+
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
+const extractCount = (res) => {
+  if (Array.isArray(res)) return res.length
+  if (res?.data && Array.isArray(res.data)) return res.data.length
+  if (res?.meta?.total !== undefined) return res.meta.total
+  return 0
+}
+
+const fetchDashboardData = async () => {
+  // Fetch Stats
+  try {
+    const [catRes, prodRes, projRes, vidRes] = await Promise.all([
+      api.get('/categories'),
+      api.get('/products'),
+      api.get('/projects'),
+      api.get('/videos')
+    ])
+
+    stats.value = {
+      categories: extractCount(catRes),
+      products: extractCount(prodRes),
+      projects: extractCount(projRes),
+      videos: extractCount(vidRes)
+    }
+  } catch (err) {
+    console.error('Error loading dashboard stats:', err)
+  } finally {
+    loading.value.stats = false
+  }
+
+  // Fetch Messages
+  try {
+    const msgRes = await api.get('/contact')
+    const allMessages = Array.isArray(msgRes) ? msgRes : (msgRes?.data || [])
+    recentMessages.value = allMessages.slice(0, 5)
+  } catch (err) {
+    console.error('Error loading recent messages:', err)
+  } finally {
+    loading.value.messages = false
+  }
+}
+
+onMounted(() => {
+  fetchDashboardData()
+})
+</script>
 
 <style scoped>
 @keyframes fadeIn {
