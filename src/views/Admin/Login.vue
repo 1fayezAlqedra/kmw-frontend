@@ -37,7 +37,8 @@
           </div>
         </div>
 
-        <div v-if="errorMessage" class="w-full max-w-sm text-center text-red-600 font-bold text-sm bg-red-50/80 backdrop-blur-sm py-3 px-4 rounded-2xl border border-red-200/50 transition-all duration-300">
+        <div v-if="errorMessage"
+          class="w-full max-w-sm text-center text-red-600 font-bold text-sm bg-red-50/80 backdrop-blur-sm py-3 px-4 rounded-2xl border border-red-200/50 transition-all duration-300">
           {{ errorMessage }}
         </div>
 
@@ -56,7 +57,9 @@
         </div>
 
         <div class="w-full max-w-sm text-center pt-2">
-          <router-link to="/forgot-password" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Forget password?</router-link>
+          <router-link to="/forgot-password"
+            class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Forget
+            password?</router-link>
         </div>
       </form>
     </div>
@@ -67,6 +70,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import authService from '@/api/authService'
+
 const router = useRouter()
 
 const email = ref('')
@@ -88,13 +92,22 @@ const handleLogin = () => {
   authService.login(credentials)
     .then(response => {
       if (response.data.success) {
-        // لقطنا الـ Token الحقيقي الصادر من الـ Laravel Sanctum
+        // لقط البيانات الحقيقية الصادرة من الـ Laravel Sanctum
         const token = response.data.access_token
+        const userData = response.data.user || response.data.data
 
-        // تخزين التوكن الحقيقي في المتصفح
+        // 1. تخزين التوكن في المتصفح
         localStorage.setItem('token', token)
 
-        // التوجيه المباشر والآمن للداشبورد
+        // 2. تخزين كائن المستخدم والـ Role للتحقق من الصلاحيات في الفرونت إند
+        if (userData) {
+          localStorage.setItem('user', JSON.stringify(userData))
+          if (userData.role) {
+            localStorage.setItem('role', userData.role)
+          }
+        }
+
+        // 3. التوجيه المباشر والآمن للداشبورد
         router.push('/admin/dashboard')
       }
     })

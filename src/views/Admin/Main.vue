@@ -62,7 +62,7 @@
       </div>
 
       <!-- Videos Card -->
-      <div class="bg-white rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[240px] relative overflow-hidden">
+      <div class="bg-[#white] rounded-2xl p-6 border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] flex flex-col justify-between transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(139,92,26,0.12)] hover:-translate-y-2 group select-none min-h-[240px] relative overflow-hidden">
         <div class="text-center">
           <p class="text-[11px] text-amber-800/80 font-black uppercase tracking-[0.2em]">Videos</p>
         </div>
@@ -161,6 +161,7 @@
 import { ref, onMounted } from 'vue'
 import api from '@/api/api'
 
+// Reactive state for statistics
 const stats = ref({
   categories: 0,
   products: 0,
@@ -168,12 +169,16 @@ const stats = ref({
   videos: 0
 })
 
+// Reactive state for messages and loading status
 const recentMessages = ref([])
 const loading = ref({
   stats: true,
   messages: true
 })
 
+/**
+ * Formats ISO date string to short display format (e.g., "Aug 20").
+ */
 const formatDate = (dateString) => {
   if (!dateString) return ''
   const date = new Date(dateString)
@@ -183,15 +188,26 @@ const formatDate = (dateString) => {
   })
 }
 
+/**
+ * Safely extracts record counts from standard Axios responses and API resources.
+ */
 const extractCount = (res) => {
-  if (Array.isArray(res)) return res.length
-  if (res?.data && Array.isArray(res.data)) return res.data.length
-  if (res?.meta?.total !== undefined) return res.meta.total
+  const payload = res?.data
+  if (!payload) return 0
+
+  if (Array.isArray(payload)) return payload.length
+  if (Array.isArray(payload.data)) return payload.data.length
+  if (payload.meta?.total !== undefined) return payload.meta.total
+  if (typeof payload.count === 'number') return payload.count
+
   return 0
 }
 
+/**
+ * Fetches dashboard statistics and recent contact messages.
+ */
 const fetchDashboardData = async () => {
-  // Fetch Stats
+  // Fetch entity statistics concurrently
   try {
     const [catRes, prodRes, projRes, vidRes] = await Promise.all([
       api.get('/categories'),
@@ -207,23 +223,28 @@ const fetchDashboardData = async () => {
       videos: extractCount(vidRes)
     }
   } catch (err) {
-    console.error('Error loading dashboard stats:', err)
+    console.error('Error fetching dashboard statistics:', err)
   } finally {
     loading.value.stats = false
   }
 
-  // Fetch Messages
+  // Fetch recent contact messages
   try {
     const msgRes = await api.get('/contact')
-    const allMessages = Array.isArray(msgRes) ? msgRes : (msgRes?.data || [])
+    const payload = msgRes?.data
+    const allMessages = Array.isArray(payload)
+      ? payload
+      : (Array.isArray(payload?.data) ? payload.data : [])
+
     recentMessages.value = allMessages.slice(0, 5)
   } catch (err) {
-    console.error('Error loading recent messages:', err)
+    console.error('Error fetching recent messages:', err)
   } finally {
     loading.value.messages = false
   }
 }
 
+// Lifecycle hook
 onMounted(() => {
   fetchDashboardData()
 })

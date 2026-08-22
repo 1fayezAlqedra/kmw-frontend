@@ -133,8 +133,8 @@
         <span class="z-10 transition-transform duration-300 group-hover:scale-105">Contact Page</span>
       </RouterLink>
 
-      <!-- Settings Link -->
-      <RouterLink to="/admin/settings"
+      <!-- Settings Link (يظهر فقط للـ super_admin) -->
+      <RouterLink v-if="isSuperAdmin" to="/admin/settings"
         class="nav-item flex items-center justify-center px-6 py-4 text-slate-700 hover:text-slate-900 font-bold rounded-2xl transition-all relative overflow-hidden group text-lg tracking-wide text-center"
         active-class="bg-[#EAE3DA]/50 text-amber-950 font-black">
         <span class="z-10 transition-transform duration-300 group-hover:scale-105">Settings</span>
@@ -148,13 +148,13 @@
     </div>
   </aside>
 
-  <!-- Backdrop overlay (الضغط هنا سيغلق السايد بار بالكامل) -->
+  <!-- Backdrop overlay -->
   <div v-if="!isCollapsed" @click="closeSidebar"
     class="fixed inset-0 z-40 bg-black/10 backdrop-blur-[2px] transition-all duration-300 cursor-pointer"></div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 
 const emit = defineEmits(['toggle'])
 const isCollapsed = ref(true)
@@ -166,27 +166,41 @@ const dropdowns = reactive({
   videos: false
 })
 
+// فحص لحظي ومباشر للـ Role من localStorage
+const isSuperAdmin = computed(() => {
+  const role = localStorage.getItem('role')
+  if (role === 'super_admin') return true
+
+  const rawUser = localStorage.getItem('user')
+  if (rawUser) {
+    try {
+      const user = JSON.parse(rawUser)
+      return user.role === 'super_admin'
+    } catch (e) {
+      return false
+    }
+  }
+
+  return false
+})
+
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
   emit('toggle')
 }
 
-// دالة مخصصة لإغلاق السايد بار فوراً عند الضغط بالخارج
 const closeSidebar = () => {
   isCollapsed.value = true
   emit('toggle')
 }
 
-// منطق الأكورديون الذكي: عند فتح قائمة، يتم إغلاق باقي القوائم تلقائياً
 const toggleDropdown = (key) => {
   const currentState = dropdowns[key]
 
-  // تصفير جميع القوائم أولاً
   Object.keys(dropdowns).forEach((k) => {
     dropdowns[k] = false
   })
 
-  // عكس حالة القائمة التي تم الضغط عليها فقط
   dropdowns[key] = !currentState
 }
 
