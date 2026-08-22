@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "vitest run",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -47,7 +48,7 @@
     "tailwindcss": "^4.3.1",
     "vite": "^8.0.16",
     "vite-plugin-vue-devtools": "^8.1.2",
-    "vitest": "^4.1.9",
+    "vitest": "^4.1.11",
     "vue-eslint-parser": "^10.4.1"
   },
   "engines": {
