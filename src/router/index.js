@@ -1,9 +1,15 @@
-import { createRouter, createWebHashHistory } from 'vue-router' // 1. استيراد الـ Hash History بدلاً من الـ Web History
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
-  // Authentication Routes
+  // Client Landing Page Route (صفحة الزائر الرئيسية)
   {
     path: '/',
+    name: 'Home',
+component: () => import('@/HomeView.vue'),  },
+
+  // Authentication Routes
+  {
+    path: '/login',
     name: 'Login',
     component: () => import('../views/Admin/Login.vue'),
   },
@@ -125,7 +131,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  // 2. تمرير الـ BASE_URL داخل الـ Hash History ليعمل بشكل متوافق تماماً مع الـ base path المعرف بـ Vite
+  // استخدام الـ Hash History مع الـ BASE_URL المعرف بـ Vite
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
