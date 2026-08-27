@@ -5,7 +5,8 @@ import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  base: '/kmw-frontend/',
+  // 👈 مسار الفرونت إند المستقل على GitHub Pages
+  base: '/kmw-frontend/user/',
 
   plugins: [
     vue(),
