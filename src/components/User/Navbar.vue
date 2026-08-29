@@ -40,7 +40,7 @@
         >
           <component
             :is="link.children ? 'span' : 'router-link'"
-            :to="link.children ? undefined : link.to"
+            :to="link.children ? link.to || undefined : link.to"
             class="rounded-xl font-bold text-stone-100 hover:text-amber-500 transition-all duration-300 relative flex items-center gap-1 whitespace-nowrap cursor-pointer"
             :class="[
               currentLang === 'ar'
@@ -163,7 +163,7 @@
           <div v-for="link in currentNavLinks" :key="link.name" class="w-full">
             <component
               :is="link.children ? 'span' : 'router-link'"
-              :to="link.children ? undefined : link.to"
+              :to="link.children ? link.to || undefined : link.to"
               @click="link.children ? toggleMobileSubmenu(link.name) : (isMobileMenuOpen = false)"
               class="transition-colors duration-200 block py-1.5 whitespace-nowrap font-serif tracking-wider uppercase cursor-pointer"
               :class="[
@@ -219,7 +219,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import navBgImage from '../../assets/puplic_wepsite/navebar/images/navbarnackground.png';
 import logoImage from '../../assets/puplic_wepsite/navebar/images/logo.png';
 
-// استرجاع اللغة المحفوظة من localStorage أو الـ DOM لضمان المزامنة
 const getStoredLang = () => {
   return localStorage.getItem('locale') || localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'ar';
 };
@@ -246,12 +245,13 @@ const navLinksData = {
     },
     {
       name: 'المنتجات',
-      to: '/#products',
+      to: '/products',
       children: [
-        { name: 'الرخام الطبيعي', to: '/#products-natural-marble' },
-        { name: 'الجرانيت الطبيعي', to: '/#products-granite' },
-        { name: 'الرخام الصناعي', to: '/#products-artificial-marble' },
-        { name: 'مطابخ كلاسيك ومودرن', to: '/#products-kitchen-designs' },
+        { name: 'رخام إيطالي', to: '/products?cat=italian-marble' },
+        { name: 'رخام إسباني', to: '/products?cat=spanish-marble' },
+        { name: 'جرانيت', to: '/products?cat=granite' },
+        { name: 'كوارتز', to: '/products?cat=quartz' },
+        { name: 'ووتر جيت', to: '/products?cat=waterjet' },
       ]
     },
     { name: 'الفيديوهات', to: '/videos' },
@@ -272,12 +272,13 @@ const navLinksData = {
     },
     {
       name: 'Products',
-      to: '/#products',
+      to: '/products',
       children: [
-        { name: 'Natural Marble', to: '/#products-natural-marble' },
-        { name: 'Natural Granite', to: '/#products-granite' },
-        { name: 'Engineered Stone', to: '/#products-artificial-marble' },
-        { name: 'Kitchen Collections', to: '/#products-kitchen-designs' },
+        { name: 'Italian Marble', to: '/products?cat=italian-marble' },
+        { name: 'Spanish Marble', to: '/products?cat=spanish-marble' },
+        { name: 'Granite', to: '/products?cat=granite' },
+        { name: 'Quartz', to: '/products?cat=quartz' },
+        { name: 'Waterjet', to: '/products?cat=waterjet' },
       ]
     },
     { name: 'Videos', to: '/videos' },
@@ -290,7 +291,6 @@ const currentNavLinks = computed(() => navLinksData[currentLang.value]);
 const toggleLanguage = () => {
   currentLang.value = currentLang.value === 'ar' ? 'en' : 'ar';
 
-  // حفظ اللغة في localStorage لتتزامن فوراً مع جميع الصفحات
   localStorage.setItem('locale', currentLang.value);
   localStorage.setItem('lang', currentLang.value);
 
@@ -310,7 +310,6 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll);
   currentLang.value = getStoredLang();
 
-  // مراقبة تغييرات اللغة من الصفحات الأخرى عبر الـ DOM أو الـ Storage
   observer = new MutationObserver(() => {
     const lang = getStoredLang();
     if (lang !== currentLang.value) {

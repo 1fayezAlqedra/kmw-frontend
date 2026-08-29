@@ -10,6 +10,11 @@ const routes = [
 
   // Client Pages (الموجودة داخل src/views/public/)
   {
+    path: '/products',
+    name: 'Products',
+    component: () => import('../views/public/ProductsView.vue'),
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('../views/public/AboutUs.vue'),
@@ -156,4 +161,4 @@ const router = createRouter({
   },
 })
 
-export default router 
+export default router
