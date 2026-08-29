@@ -142,8 +142,13 @@ const slides = ref([
   slide2
 ]);
 
+// قراءة اللغة المخزنة لضمان التطابق مع النافبار وباقي الموقع
+const getStoredLang = () => {
+  return localStorage.getItem('locale') || localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'ar';
+};
+
 // حالة اللغة والانيميشن والسلايدر
-const currentLang = ref(document.documentElement.getAttribute('lang') || 'ar');
+const currentLang = ref(getStoredLang());
 const isLoaded = ref(false);
 const currentSlide = ref(0);
 let observer = null;
@@ -194,14 +199,16 @@ watch(currentLang, () => {
 });
 
 onMounted(() => {
+  currentLang.value = getStoredLang();
+
   // تأخير الانيميشن الأول عند التحميل
   setTimeout(() => {
     isLoaded.value = true;
   }, 1000);
 
-  // مراقبة تغيير اللغة من العنصر الجذري
+  // مراقبة تغيير اللغة من العنصر الجذري أو الـ localStorage فور حدوثه
   observer = new MutationObserver(() => {
-    const newLang = document.documentElement.getAttribute('lang') || 'ar';
+    const newLang = getStoredLang();
     if (currentLang.value !== newLang) {
       currentLang.value = newLang;
     }
@@ -211,10 +218,15 @@ onMounted(() => {
     attributes: true,
     attributeFilter: ['lang', 'dir']
   });
+
+  window.addEventListener('storage', () => {
+    currentLang.value = getStoredLang();
+  });
 });
 
 onUnmounted(() => {
   if (observer) observer.disconnect();
+  window.removeEventListener('storage', () => {});
 });
 </script>
 

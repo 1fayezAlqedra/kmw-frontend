@@ -1,11 +1,29 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
-  // Client Landing Page Route (صفحة الزائر الرئيسية)
+  // Client Landing Page Route
   {
     path: '/',
     name: 'Home',
-component: () => import('@/HomeView.vue'),  },
+    component: () => import('@/HomeView.vue'),
+  },
+
+  // Client Pages (الموجودة داخل src/views/public/)
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('../views/public/AboutUs.vue'),
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('../views/public/ContactUs.vue'),
+  },
+  {
+    path: '/videos',
+    name: 'Videos',
+    component: () => import('../views/public/Videos.vue'),
+  },
 
   // Authentication Routes
   {
@@ -131,7 +149,6 @@ component: () => import('@/HomeView.vue'),  },
 ]
 
 const router = createRouter({
-  // استخدام الـ Hash History مع الـ BASE_URL المعرف بـ Vite
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
@@ -139,4 +156,4 @@ const router = createRouter({
   },
 })
 
-export default router
+export default router 

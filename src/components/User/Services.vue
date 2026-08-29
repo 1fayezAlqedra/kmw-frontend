@@ -115,7 +115,12 @@ import stairsImg from '@/assets/puplic_wepsite/Service/images/stairs.jpg';
 register();
 
 const swiperEl = ref(null);
-const currentLang = ref(document.documentElement.getAttribute('lang') || 'ar');
+
+const getStoredLang = () => {
+  return localStorage.getItem('locale') || localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'ar';
+};
+
+const currentLang = ref(getStoredLang());
 let observer = null;
 
 const servicesData = ref([
@@ -135,7 +140,24 @@ const currentServices = computed(() => {
   }));
 });
 
+const handleLangChange = (e) => {
+  if (e.detail && e.detail.lang) {
+    currentLang.value = e.detail.lang;
+  } else {
+    currentLang.value = getStoredLang();
+  }
+};
+
 onMounted(async () => {
+  // فحص محتويات الـ LocalStorage في الـ Console لمعرفة اسم المفتاح بدقة
+  console.log("--- فحص الـ LocalStorage ---");
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    console.log(`${key}:`, localStorage.getItem(key));
+  }
+  console.log("----------------------------");
+
+  currentLang.value = getStoredLang();
   await nextTick();
 
   if (swiperEl.value) {
@@ -147,11 +169,13 @@ onMounted(async () => {
     }
   }
 
+  window.addEventListener('language-changed', handleLangChange);
+  window.addEventListener('storage', () => {
+    currentLang.value = getStoredLang();
+  });
+
   observer = new MutationObserver(() => {
-    const newLang = document.documentElement.getAttribute('lang') || 'ar';
-    if (currentLang.value !== newLang) {
-      currentLang.value = newLang;
-    }
+    currentLang.value = getStoredLang();
   });
 
   observer.observe(document.documentElement, {
@@ -162,6 +186,8 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (observer) observer.disconnect();
+  window.removeEventListener('language-changed', handleLangChange);
+  window.removeEventListener('storage', () => {});
 });
 </script>
 

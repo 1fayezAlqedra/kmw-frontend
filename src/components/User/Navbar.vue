@@ -6,8 +6,7 @@
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between relative z-10 gap-4">
 
-      <!-- LOGO SECTION -->
-      <a href="#" class="flex items-center gap-2 sm:gap-3 group shrink-0">
+      <router-link to="/" class="flex items-center gap-2 sm:gap-3 group shrink-0">
         <div class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center group-hover:scale-105 active:scale-95 transition-transform duration-300">
           <img :src="logoImage" alt="Kitchen & Marble World Logo" class="w-full h-full object-contain drop-shadow-md" />
         </div>
@@ -31,18 +30,18 @@
             {{ currentLang === 'ar' ? 'KITCHEN & MARBLE WORLD' : 'Luxury Designs' }}
           </span>
         </div>
-      </a>
+      </router-link>
 
-      <!-- DESKTOP NAVIGATION -->
       <nav class="hidden lg:flex items-center gap-1.5 xl:gap-2 shrink-0">
         <div
           v-for="link in currentNavLinks"
           :key="link.name"
           class="relative group"
         >
-          <a
-            :href="link.children ? 'javascript:void(0)' : link.href"
-            class="rounded-xl font-bold text-stone-100 hover:text-amber-500 transition-all duration-300 relative flex items-center gap-1 whitespace-nowrap"
+          <component
+            :is="link.children ? 'span' : 'router-link'"
+            :to="link.children ? undefined : link.to"
+            class="rounded-xl font-bold text-stone-100 hover:text-amber-500 transition-all duration-300 relative flex items-center gap-1 whitespace-nowrap cursor-pointer"
             :class="[
               currentLang === 'ar'
                 ? 'px-3 py-1.5 text-base font-sans'
@@ -60,9 +59,8 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </a>
+          </component>
 
-          <!-- DESKTOP DROPDOWN SUB-MENU WITH BACKGROUND IMAGE -->
           <div
             v-if="link.children"
             class="absolute top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 pt-3 w-60 z-50"
@@ -73,20 +71,19 @@
               :style="{ backgroundImage: `url(${navBgImage})` }"
             >
               <li v-for="child in link.children" :key="child.name">
-                <a
-                  :href="child.href"
+                <router-link
+                  :to="child.to"
                   class="block px-3 py-2 rounded-xl font-medium text-stone-100 hover:text-amber-400 hover:bg-black/40 transition-all duration-200 whitespace-nowrap"
                   :class="[currentLang === 'ar' ? 'text-sm font-sans' : 'text-xs font-serif tracking-wide']"
                 >
                   {{ child.name }}
-                </a>
+                </router-link>
               </li>
             </ul>
           </div>
         </div>
       </nav>
 
-      <!-- DESKTOP ACTIONS -->
       <div class="hidden lg:flex items-center gap-3 shrink-0">
         <button
           @click="toggleLanguage"
@@ -96,8 +93,8 @@
           <span>{{ currentLang === 'ar' ? 'English' : 'العربية' }}</span>
         </button>
 
-        <a
-          href="#contact"
+        <router-link
+          to="/contact"
           class="px-5 py-2 rounded-xl border border-stone-600 bg-stone-900/90 hover:bg-stone-800 text-stone-100 hover:text-amber-400 hover:border-amber-500/60 transition-all duration-300 font-medium whitespace-nowrap shadow-md active:scale-95"
           :class="[
             currentLang === 'ar'
@@ -106,10 +103,9 @@
           ]"
         >
           {{ currentLang === 'ar' ? 'تواصل معنا' : 'Contact Us' }}
-        </a>
+        </router-link>
       </div>
 
-      <!-- MOBILE MENU BUTTON -->
       <button
         @click="isMobileMenuOpen = !isMobileMenuOpen"
         class="lg:hidden p-2 rounded-xl border border-amber-500/40 bg-stone-900/80 text-amber-500 hover:text-amber-400 active:scale-90 transition-all duration-200 shadow-md z-50 shrink-0"
@@ -123,7 +119,6 @@
 
     </div>
 
-    <!-- BACKDROP (DARK OVERLAY FOR MOBILE) -->
     <transition
       enter-active-class="transition-opacity duration-300 ease-out"
       enter-from-class="opacity-0"
@@ -139,7 +134,6 @@
       ></div>
     </transition>
 
-    <!-- MOBILE SIDE DRAWER -->
     <transition
       enter-active-class="transition-transform duration-300 ease-out"
       :enter-from-class="currentLang === 'ar' ? 'translate-x-full' : '-translate-x-full'"
@@ -167,17 +161,18 @@
 
         <div class="flex flex-col items-center justify-center my-auto gap-5 text-center w-full">
           <div v-for="link in currentNavLinks" :key="link.name" class="w-full">
-            <a
-              :href="link.children ? 'javascript:void(0)' : link.href"
-              @click="link.children ? toggleMobileSubmenu(link.name) : navigateMobile(link.href)"
-              class="transition-colors duration-200 block py-1.5 whitespace-nowrap font-serif tracking-wider uppercase"
+            <component
+              :is="link.children ? 'span' : 'router-link'"
+              :to="link.children ? undefined : link.to"
+              @click="link.children ? toggleMobileSubmenu(link.name) : (isMobileMenuOpen = false)"
+              class="transition-colors duration-200 block py-1.5 whitespace-nowrap font-serif tracking-wider uppercase cursor-pointer"
               :class="[
                 openMobileSubmenu === link.name ? 'text-amber-500 font-semibold' : 'text-stone-100 hover:text-amber-400',
                 currentLang === 'ar' ? 'text-xl font-bold font-sans' : 'text-lg font-normal'
               ]"
             >
               {{ link.name }}
-            </a>
+            </component>
 
             <transition
               enter-active-class="transition-all duration-300 ease-out"
@@ -191,15 +186,15 @@
                 v-if="link.children && openMobileSubmenu === link.name"
                 class="overflow-hidden flex flex-col items-center gap-2 py-2 my-1 rounded-xl bg-black/40 backdrop-blur-md border border-stone-800/80"
               >
-                <a
+                <router-link
                   v-for="child in link.children"
                   :key="child.name"
-                  :href="child.href"
+                  :to="child.to"
                   @click="isMobileMenuOpen = false"
                   class="text-stone-300 hover:text-amber-400 transition-colors whitespace-nowrap font-serif tracking-wide py-1 text-sm"
                 >
                   — {{ child.name }}
-                </a>
+                </router-link>
               </div>
             </transition>
           </div>
@@ -224,63 +219,69 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import navBgImage from '../../assets/puplic_wepsite/navebar/images/navbarnackground.png';
 import logoImage from '../../assets/puplic_wepsite/navebar/images/logo.png';
 
-const currentLang = ref('ar');
+// استرجاع اللغة المحفوظة من localStorage أو الـ DOM لضمان المزامنة
+const getStoredLang = () => {
+  return localStorage.getItem('locale') || localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'ar';
+};
+
+const currentLang = ref(getStoredLang());
 const isScrolled = ref(false);
 const isMobileMenuOpen = ref(false);
 const openMobileSubmenu = ref(null);
+let observer = null;
 
 const navLinksData = {
   ar: [
-    { name: 'الرئيسية', href: '#hero' },
-    { name: 'عن الشركة', href: '#about' },
+    { name: 'الرئيسية', to: '/' },
+    { name: 'عن الشركة', to: '/about' },
     {
       name: 'الخدمات',
-      href: '#services',
+      to: '/#services',
       children: [
-        { name: 'تصميم وتركيب المطابخ', href: '#services-kitchens' },
-        { name: 'توريد وقص الرخام والجرانيت', href: '#services-marble' },
-        { name: 'أعمال الووترجيت والتصاميم', href: '#services-waterjet' },
-        { name: 'تشطيب الواجهات والأرضيات', href: '#services-cladding' },
+        { name: 'تصميم وتركيب المطابخ', to: '/#services-kitchens' },
+        { name: 'توريد وقص الرخام والجرانيت', to: '/#services-marble' },
+        { name: 'أعمال الووترجيت والتصاميم', to: '/#services-waterjet' },
+        { name: 'تشطيب الواجهات والأرضيات', to: '/#services-cladding' },
       ]
     },
     {
       name: 'المنتجات',
-      href: '#products',
+      to: '/#products',
       children: [
-        { name: 'الرخام الطبيعي', href: '#products-natural-marble' },
-        { name: 'الجرانيت الطبيعي', href: '#products-granite' },
-        { name: 'الرخام الصناعي', href: '#products-artificial-marble' },
-        { name: 'مطابخ كلاسيك ومودرن', href: '#products-kitchen-designs' },
+        { name: 'الرخام الطبيعي', to: '/#products-natural-marble' },
+        { name: 'الجرانيت الطبيعي', to: '/#products-granite' },
+        { name: 'الرخام الصناعي', to: '/#products-artificial-marble' },
+        { name: 'مطابخ كلاسيك ومودرن', to: '/#products-kitchen-designs' },
       ]
     },
-    { name: 'الفيديوهات', href: '#videos' },
-    { name: 'تواصل معنا', href: '#contact' }
+    { name: 'الفيديوهات', to: '/videos' },
+    { name: 'تواصل معنا', to: '/contact' }
   ],
   en: [
-    { name: 'Home', href: '#hero' },
-    { name: 'About Us', href: '#about' },
+    { name: 'Home', to: '/' },
+    { name: 'About Us', to: '/about' },
     {
       name: 'Services',
-      href: '#services',
+      to: '/#services',
       children: [
-        { name: 'Kitchen Design & Fitting', href: '#services-kitchens' },
-        { name: 'Marble & Granite Supply', href: '#services-marble' },
-        { name: 'Waterjet Cutting & CNC', href: '#services-waterjet' },
-        { name: 'Flooring & Wall Cladding', href: '#services-cladding' },
+        { name: 'Kitchen Design & Fitting', to: '/#services-kitchens' },
+        { name: 'Marble & Granite Supply', to: '/#services-marble' },
+        { name: 'Waterjet Cutting & CNC', to: '/#services-waterjet' },
+        { name: 'Flooring & Wall Cladding', to: '/#services-cladding' },
       ]
     },
     {
       name: 'Products',
-      href: '#products',
+      to: '/#products',
       children: [
-        { name: 'Natural Marble', href: '#products-natural-marble' },
-        { name: 'Natural Granite', href: '#products-granite' },
-        { name: 'Engineered Stone', href: '#products-artificial-marble' },
-        { name: 'Kitchen Collections', href: '#products-kitchen-designs' },
+        { name: 'Natural Marble', to: '/#products-natural-marble' },
+        { name: 'Natural Granite', to: '/#products-granite' },
+        { name: 'Engineered Stone', to: '/#products-artificial-marble' },
+        { name: 'Kitchen Collections', to: '/#products-kitchen-designs' },
       ]
     },
-    { name: 'Videos', href: '#videos' },
-    { name: 'Contact Us', href: '#contact' }
+    { name: 'Videos', to: '/videos' },
+    { name: 'Contact Us', to: '/contact' }
   ]
 };
 
@@ -288,6 +289,11 @@ const currentNavLinks = computed(() => navLinksData[currentLang.value]);
 
 const toggleLanguage = () => {
   currentLang.value = currentLang.value === 'ar' ? 'en' : 'ar';
+
+  // حفظ اللغة في localStorage لتتزامن فوراً مع جميع الصفحات
+  localStorage.setItem('locale', currentLang.value);
+  localStorage.setItem('lang', currentLang.value);
+
   document.documentElement.setAttribute('dir', currentLang.value === 'ar' ? 'rtl' : 'ltr');
   document.documentElement.setAttribute('lang', currentLang.value);
 };
@@ -300,16 +306,27 @@ const toggleMobileSubmenu = (linkName) => {
   openMobileSubmenu.value = openMobileSubmenu.value === linkName ? null : linkName;
 };
 
-const navigateMobile = (href) => {
-  isMobileMenuOpen.value = false;
-  window.location.href = href;
-};
-
 onMounted(() => {
   window.addEventListener('scroll', handleScroll);
+  currentLang.value = getStoredLang();
+
+  // مراقبة تغييرات اللغة من الصفحات الأخرى عبر الـ DOM أو الـ Storage
+  observer = new MutationObserver(() => {
+    const lang = getStoredLang();
+    if (lang !== currentLang.value) {
+      currentLang.value = lang;
+    }
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang', 'dir'] });
+
+  window.addEventListener('storage', () => {
+    currentLang.value = getStoredLang();
+  });
 });
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
+  if (observer) observer.disconnect();
+  window.removeEventListener('storage', () => {});
 });
 </script>

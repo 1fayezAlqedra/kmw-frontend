@@ -92,7 +92,7 @@
           </li>
         </ul>
 
-        <!-- Read More Button (خلفية صورة - عند الهوفر تصبح بيضاء والنص أسود) -->
+        <!-- Read More Button -->
         <div :class="currentLang === 'ar' ? 'text-right' : 'text-left'">
           <a
             href="#about-more"
@@ -102,7 +102,7 @@
             <!-- Overlay لتعتيم صورة خلفية الزر لجعل النص أبيض واضح -->
             <div class="absolute inset-0 bg-stone-950/70 transition-opacity duration-500 group-hover/btn:opacity-0"></div>
 
-            <!-- White Hover Background Layer (تظهر بالكامل عند الهوفر) -->
+            <!-- White Hover Background Layer -->
             <div class="absolute inset-0 bg-white opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"></div>
 
             <!-- Content (Text & Arrow) -->
@@ -141,8 +141,13 @@ import slab3Image from '@/assets/puplic_wepsite/aboutUs/images/white_marble.jpg'
 import slab4Image from '@/assets/puplic_wepsite/aboutUs/images/light_marble.jpg';
 import companyLogo from '@/assets/puplic_wepsite/navebar/images/logo.png';
 
+// دالة موحدة لجلب اللغة المخزنة أو الحالية بدقة
+const getStoredLang = () => {
+  return localStorage.getItem('locale') || localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'ar';
+};
+
 // حالة اللغة
-const currentLang = ref(document.documentElement.getAttribute('lang') || 'ar');
+const currentLang = ref(getStoredLang());
 let observer = null;
 
 // النصوص بالعربية والإنجليزية
@@ -164,12 +169,24 @@ const currentFeatures = computed(() => {
   return currentLang.value === 'ar' ? featuresAr : featuresEn;
 });
 
+const handleLangChange = (e) => {
+  if (e.detail && e.detail.lang) {
+    currentLang.value = e.detail.lang;
+  } else {
+    currentLang.value = getStoredLang();
+  }
+};
+
 onMounted(() => {
+  currentLang.value = getStoredLang();
+
+  window.addEventListener('language-changed', handleLangChange);
+  window.addEventListener('storage', () => {
+    currentLang.value = getStoredLang();
+  });
+
   observer = new MutationObserver(() => {
-    const newLang = document.documentElement.getAttribute('lang') || 'ar';
-    if (currentLang.value !== newLang) {
-      currentLang.value = newLang;
-    }
+    currentLang.value = getStoredLang();
   });
 
   observer.observe(document.documentElement, {
@@ -180,6 +197,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (observer) observer.disconnect();
+  window.removeEventListener('language-changed', handleLangChange);
+  window.removeEventListener('storage', () => {});
 });
 </script>
 
