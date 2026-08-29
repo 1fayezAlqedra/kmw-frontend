@@ -38,9 +38,8 @@
           :key="link.name"
           class="relative group"
         >
-          <component
-            :is="link.children ? 'span' : 'router-link'"
-            :to="link.children ? link.to || undefined : link.to"
+          <router-link
+            :to="link.to"
             class="rounded-xl font-bold text-stone-100 hover:text-amber-500 transition-all duration-300 relative flex items-center gap-1 whitespace-nowrap cursor-pointer"
             :class="[
               currentLang === 'ar'
@@ -59,7 +58,7 @@
             >
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </component>
+          </router-link>
 
           <div
             v-if="link.children"
@@ -161,18 +160,35 @@
 
         <div class="flex flex-col items-center justify-center my-auto gap-5 text-center w-full">
           <div v-for="link in currentNavLinks" :key="link.name" class="w-full">
-            <component
-              :is="link.children ? 'span' : 'router-link'"
-              :to="link.children ? link.to || undefined : link.to"
-              @click="link.children ? toggleMobileSubmenu(link.name) : (isMobileMenuOpen = false)"
-              class="transition-colors duration-200 block py-1.5 whitespace-nowrap font-serif tracking-wider uppercase cursor-pointer"
-              :class="[
-                openMobileSubmenu === link.name ? 'text-amber-500 font-semibold' : 'text-stone-100 hover:text-amber-400',
-                currentLang === 'ar' ? 'text-xl font-bold font-sans' : 'text-lg font-normal'
-              ]"
-            >
-              {{ link.name }}
-            </component>
+            <div class="flex items-center justify-center gap-2">
+              <router-link
+                :to="link.to"
+                @click="isMobileMenuOpen = false"
+                class="transition-colors duration-200 py-1.5 whitespace-nowrap font-serif tracking-wider uppercase cursor-pointer"
+                :class="[
+                  openMobileSubmenu === link.name ? 'text-amber-500 font-semibold' : 'text-stone-100 hover:text-amber-400',
+                  currentLang === 'ar' ? 'text-xl font-bold font-sans' : 'text-lg font-normal'
+                ]"
+              >
+                {{ link.name }}
+              </router-link>
+
+              <button
+                v-if="link.children"
+                @click="toggleMobileSubmenu(link.name)"
+                class="p-1 text-stone-400 hover:text-amber-400"
+              >
+                <svg
+                  class="w-4 h-4 transition-transform duration-200"
+                  :class="[openMobileSubmenu === link.name ? 'rotate-180 text-amber-500' : '']"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
 
             <transition
               enter-active-class="transition-all duration-300 ease-out"
@@ -235,12 +251,14 @@ const navLinksData = {
     { name: 'عن الشركة', to: '/about' },
     {
       name: 'الخدمات',
-      to: '/#services',
+      to: '/services',
       children: [
-        { name: 'تصميم وتركيب المطابخ', to: '/#services-kitchens' },
-        { name: 'توريد وقص الرخام والجرانيت', to: '/#services-marble' },
-        { name: 'أعمال الووترجيت والتصاميم', to: '/#services-waterjet' },
-        { name: 'تشطيب الواجهات والأرضيات', to: '/#services-cladding' },
+        { name: 'مطابخ', to: '/services/kitchens' },
+        { name: 'فلل', to: '/services/villas' },
+        { name: 'درج', to: '/services/stairs' },
+        { name: 'ووتر جيت', to: '/services/waterjet' },
+        { name: 'نوافير', to: '/services/fountains' },
+        { name: 'طاولات', to: '/services/tables' }
       ]
     },
     {
@@ -262,12 +280,14 @@ const navLinksData = {
     { name: 'About Us', to: '/about' },
     {
       name: 'Services',
-      to: '/#services',
+      to: '/services',
       children: [
-        { name: 'Kitchen Design & Fitting', to: '/#services-kitchens' },
-        { name: 'Marble & Granite Supply', to: '/#services-marble' },
-        { name: 'Waterjet Cutting & CNC', to: '/#services-waterjet' },
-        { name: 'Flooring & Wall Cladding', to: '/#services-cladding' },
+        { name: 'Kitchens', to: '/services/kitchens' },
+        { name: 'Villas', to: '/services/villas' },
+        { name: 'Stairs', to: '/services/stairs' },
+        { name: 'Waterjet', to: '/services/waterjet' },
+        { name: 'Fountains', to: '/services/fountains' },
+        { name: 'Tables', to: '/services/tables' }
       ]
     },
     {

@@ -7,7 +7,17 @@ const routes = [
     name: 'Home',
     component: () => import('@/HomeView.vue'),
   },
-
+  // portofolio and services pages
+  {
+    path: '/services/:category',
+    name: 'service-detail',
+    component: () => import('@/views/public/ServicesView.vue'),
+  },
+  {
+    path: '/services/:category',
+    name: 'service-detail',
+    component: () => import('@/views/public/ServiceDetailView.vue'),
+  },
   // Client Pages (الموجودة داخل src/views/public/)
   {
     path: '/products',
