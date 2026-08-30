@@ -7,10 +7,11 @@ const routes = [
     name: 'Home',
     component: () => import('@/HomeView.vue'),
   },
-  // portofolio and services pages
+
+  // Services Pages (إضافة المسار الرئيسي + مسار التفاصيل)
   {
-    path: '/services/:category',
-    name: 'service-detail',
+    path: '/services',
+    name: 'Services',
     component: () => import('@/views/public/ServicesView.vue'),
   },
   {
@@ -18,7 +19,8 @@ const routes = [
     name: 'service-detail',
     component: () => import('@/views/public/ServiceDetailView.vue'),
   },
-  // Client Pages (الموجودة داخل src/views/public/)
+
+  // Client Pages
   {
     path: '/products',
     name: 'Products',

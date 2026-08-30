@@ -66,13 +66,13 @@
             :class="[currentLang === 'ar' ? 'right-0' : 'left-0']"
           >
             <ul
-              class="bg-stone-950/90 bg-cover bg-center border border-stone-800 rounded-2xl p-2 shadow-2xl backdrop-blur-xl flex flex-col gap-1 text-center overflow-hidden"
+              class="bg-stone-950/95 bg-cover bg-center border border-stone-800 rounded-2xl p-2 shadow-2xl backdrop-blur-xl flex flex-col gap-1 text-right overflow-hidden"
               :style="{ backgroundImage: `url(${navBgImage})` }"
             >
               <li v-for="child in link.children" :key="child.name">
                 <router-link
                   :to="child.to"
-                  class="block px-3 py-2 rounded-xl font-medium text-stone-100 hover:text-amber-400 hover:bg-black/40 transition-all duration-200 whitespace-nowrap"
+                  class="block px-3.5 py-2 rounded-xl font-medium text-stone-200 hover:text-amber-400 hover:bg-white/5 transition-all duration-200 whitespace-nowrap"
                   :class="[currentLang === 'ar' ? 'text-sm font-sans' : 'text-xs font-serif tracking-wide']"
                 >
                   {{ child.name }}
@@ -158,7 +158,7 @@
           </button>
         </div>
 
-        <div class="flex flex-col items-center justify-center my-auto gap-5 text-center w-full">
+        <div class="flex flex-col items-center justify-center my-auto gap-4 text-center w-full">
           <div v-for="link in currentNavLinks" :key="link.name" class="w-full">
             <div class="flex items-center justify-center gap-2">
               <router-link
@@ -269,7 +269,7 @@ const navLinksData = {
         { name: 'رخام إسباني', to: '/products?cat=spanish-marble' },
         { name: 'جرانيت', to: '/products?cat=granite' },
         { name: 'كوارتز', to: '/products?cat=quartz' },
-        { name: 'ووتر جيت', to: '/products?cat=waterjet' },
+        { name: 'ووتر جيت', to: '/products?cat=waterjet' }
       ]
     },
     { name: 'الفيديوهات', to: '/videos' },
@@ -298,7 +298,7 @@ const navLinksData = {
         { name: 'Spanish Marble', to: '/products?cat=spanish-marble' },
         { name: 'Granite', to: '/products?cat=granite' },
         { name: 'Quartz', to: '/products?cat=quartz' },
-        { name: 'Waterjet', to: '/products?cat=waterjet' },
+        { name: 'Waterjet', to: '/products?cat=waterjet' }
       ]
     },
     { name: 'Videos', to: '/videos' },
