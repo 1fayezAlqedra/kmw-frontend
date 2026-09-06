@@ -15,6 +15,11 @@ export default defineConfig({
     },
   },
 
+  css: {
+    // حل تحذيرات Tailwind v4 (Unknown at rule @theme / @tailwind)
+    transformer: 'postcss',
+  },
+
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
