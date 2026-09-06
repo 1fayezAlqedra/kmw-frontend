@@ -4,9 +4,9 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig({
-  // 👈 مسار الفرونت إند المستقل على GitHub Pages
-  base: '/kmw-frontend/user/',
+export default defineConfig(({ command }) => ({
+  // '/' في البيئة المحلية، و '/kmw-frontend/' المخصص لـ GitHub Pages عند البناء
+  base: command === 'serve' ? '/' : '/kmw-frontend/',
 
   plugins: [
     vue(),
@@ -36,4 +36,4 @@ export default defineConfig({
       }
     }
   }
-})
+}))
