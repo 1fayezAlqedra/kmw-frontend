@@ -1,39 +1,37 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import tailwindcss from '@tailwindcss/vite'
-import { fileURLToPath, URL } from 'node:url'
+import path from 'path'
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  // 👈 مسار الفرونت إند المستقل على GitHub Pages
-  base: '/kmw-frontend/user/',
+  plugins: [vue()],
 
-  plugins: [
-    vue(),
-    vueJsx(),
-    tailwindcss(),
-  ],
+  // مسار المستودع المخصص لـ GitHub Pages
+  base: '/kmw-frontend/',
+
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': path.resolve(__dirname, './src'),
+    },
   },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-  },
+
   build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
     rollupOptions: {
       output: {
-        sanitizeFileName(name) {
-          const match = /^[a-z]:/i.test(name);
-          const DRIVE_LETTER = match ? name.substr(0, 3) : '';
-          return DRIVE_LETTER + name.substr(match ? 3 : 0).replace(/[\x00-\x1F\x7F<>*:"|?]/g, '').replace(/^\_+/, '');
-        },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
-      }
-    }
-  }
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: ({ name }) => {
+          if (/\.(gif|jpe?g|png|svg|webp)$/.test(name ?? '')) {
+            return 'assets/images/[name]-[hash].[ext]';
+          }
+          if (/\.css$/.test(name ?? '')) {
+            return 'assets/css/[name]-[hash].[ext]';
+          }
+          return 'assets/[ext]/[name]-[hash].[ext]';
+        },
+      },
+    },
+  },
 })
