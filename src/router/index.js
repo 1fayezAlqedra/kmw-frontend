@@ -1,30 +1,13 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
-  // Client Landing Page Route
+  // --------------------------------------------------------------------------
+  // 1. Client Landing Page Route (الصفحات العامة المتاحة حالياً)
+  // --------------------------------------------------------------------------
   {
     path: '/',
     name: 'Home',
     component: () => import('@/HomeView.vue'),
-  },
-
-  // Services Pages (إضافة المسار الرئيسي + مسار التفاصيل)
-  {
-    path: '/services',
-    name: 'Services',
-    component: () => import('@/views/public/ServicesView.vue'),
-  },
-  {
-    path: '/services/:category',
-    name: 'service-detail',
-    component: () => import('@/views/public/ServiceDetailView.vue'),
-  },
-
-  // Client Pages
-  {
-    path: '/products',
-    name: 'Products',
-    component: () => import('../views/public/ProductsView.vue'),
   },
   {
     path: '/about',
@@ -36,13 +19,43 @@ const routes = [
     name: 'Contact',
     component: () => import('../views/public/ContactUs.vue'),
   },
+
+  // --------------------------------------------------------------------------
+  // 2. Services Pages (معطلة مؤقتاً)
+  // --------------------------------------------------------------------------
+  /*
+  {
+    path: '/services',
+    name: 'Services',
+    component: () => import('@/views/public/ServicesView.vue'),
+  },
+  {
+    path: '/services/:category',
+    name: 'service-detail',
+    component: () => import('@/views/public/ServiceDetailView.vue'),
+  },
+  */
+
+  // --------------------------------------------------------------------------
+  // 3. Client Pages (معطلة مؤقتاً)
+  // --------------------------------------------------------------------------
+  /*
+  {
+    path: '/products',
+    name: 'Products',
+    component: () => import('../views/public/ProductsView.vue'),
+  },
   {
     path: '/videos',
     name: 'Videos',
     component: () => import('../views/public/Videos.vue'),
   },
+  */
 
-  // Authentication Routes
+  // --------------------------------------------------------------------------
+  // 4. Authentication Routes (معطلة مؤقتاً)
+  // --------------------------------------------------------------------------
+  /*
   {
     path: '/login',
     name: 'Login',
@@ -58,8 +71,12 @@ const routes = [
     name: 'ResetPassword',
     component: () => import('../views/Admin/ResetPassword.vue'),
   },
+  */
 
-  // Admin Dashboard Routes
+  // --------------------------------------------------------------------------
+  // 5. Admin Dashboard Routes (معطلة مؤقتاً)
+  // --------------------------------------------------------------------------
+  /*
   {
     path: '/admin',
     component: () => import('../layouts/AdminLayout.vue'),
@@ -157,8 +174,11 @@ const routes = [
       },
     ],
   },
+  */
 
-  // 404 Fallback
+  // --------------------------------------------------------------------------
+  // 6. 404 Fallback (توجيه أي مسار معطل أو غير موجود للصفحة الرئيسية)
+  // --------------------------------------------------------------------------
   {
     path: '/:pathMatch(.*)*',
     redirect: '/',
