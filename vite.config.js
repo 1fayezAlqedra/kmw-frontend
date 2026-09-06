@@ -26,4 +26,4 @@ export default defineConfig({
     // استخدام esbuild لتصغير CSS بدلاً من lightningcss
     cssMinify: 'esbuild',
   },
-})ؤؤؤ
+})
