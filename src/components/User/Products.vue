@@ -1,28 +1,23 @@
 <template>
-  <!-- SERVICES INFINITE MARQUEE SECTION -->
   <section
-    id="services"
+    id="featured-products"
     class="relative w-full py-16 sm:py-24 bg-stone-950 bg-cover bg-center bg-fixed text-white overflow-hidden flex flex-col items-center justify-center select-none"
     :style="{ backgroundImage: `url(${marbleBgImage})` }"
   >
-    <!-- Dark Marble Overlay / Gradient FX -->
     <div class="absolute inset-0 bg-gradient-to-b from-stone-950/90 via-stone-950/85 to-stone-950/95 backdrop-blur-[2px]"></div>
 
-    <!-- Container -->
     <div class="relative z-10 w-full mx-auto flex flex-col items-center px-4">
 
-      <!-- SECTION TITLE -->
       <div class="text-center mb-10 sm:mb-14 px-4">
         <h2
           class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-wide mb-3 drop-shadow-md"
           :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
         >
-          {{ currentLang === 'ar' ? 'خدماتنا المميزة' : 'Our Services' }}
+          {{ currentLang === 'ar' ? 'منتجاتنا الفاخرة' : 'Our Products' }}
         </h2>
         <div class="w-12 sm:w-16 h-1 bg-amber-500/80 mx-auto rounded-full shadow-sm"></div>
       </div>
 
-      <!-- SWIPER CAROUSEL CONTAINER -->
       <div class="w-full relative">
         <swiper-container
           ref="swiperEl"
@@ -42,37 +37,38 @@
           class="w-full py-4 cursor-grab active:cursor-grabbing"
         >
           <swiper-slide
-            v-for="service in currentServices"
-            :key="service.id"
+            v-for="product in currentProducts"
+            :key="product.id"
             class="h-auto"
           >
-            <!-- FULL CLICKABLE CARD CONTAINER -->
-            <router-link
-              :to="service.link"
-              class="group block rounded-2xl overflow-hidden bg-stone-900/90 border border-white/10 shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-amber-500/60 hover:shadow-amber-500/10 backdrop-blur-md h-full flex flex-col justify-between cursor-pointer"
+            <div
+              class="group block rounded-2xl overflow-hidden bg-stone-900/90 border border-white/10 shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:border-amber-500/60 hover:shadow-amber-500/10 backdrop-blur-md h-full flex flex-col justify-between"
             >
 
-              <!-- Image Container -->
               <div class="relative h-60 sm:h-72 md:h-80 w-full overflow-hidden bg-stone-950">
                 <img
-                  :src="service.image"
-                  :alt="service.title"
+                  :src="product.image"
+                  :alt="product.title"
                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div class="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-300"></div>
+
+                <span class="absolute top-3 right-3 bg-stone-950/80 border border-white/10 text-amber-400 text-xs px-3 py-1 rounded-full backdrop-blur-md font-bold shadow-lg">
+                  {{ product.categoryTag }}
+                </span>
               </div>
 
-              <!-- Bottom Dark Bar Text -->
-              <div class="bg-stone-950/90 p-5 sm:p-6 text-center border-t border-white/5 flex flex-col items-center justify-center min-h-[100px]">
+              <div class="bg-stone-950/90 p-5 sm:p-6 text-center border-t border-white/5 flex flex-col items-center justify-center min-h-[120px]">
                 <h3
                   class="text-base sm:text-lg md:text-xl font-bold text-stone-200 group-hover:text-amber-400 transition-colors duration-300 mb-3 truncate w-full"
                   :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
                 >
-                  {{ service.title }}
+                  {{ product.title }}
                 </h3>
 
-                <!-- Service Action Button Style Container -->
-                <div
+                <!-- التوجيه التلقائي مع تمرير اسم الكاتيجوري -->
+                <router-link
+                  :to="{ path: '/products', query: { category: product.categorySlug } }"
                   class="relative inline-flex items-center justify-center px-5 py-2 rounded-xl overflow-hidden border border-white/20 text-white font-bold text-xs tracking-wider shadow-md transition-all duration-500 bg-cover bg-center w-full max-w-[200px]"
                   :style="{ backgroundImage: `url(${BtnBgImage})` }"
                 >
@@ -83,12 +79,12 @@
                     class="relative z-10 transition-colors duration-300 group-hover:text-stone-950 font-black"
                     :class="currentLang === 'ar' ? 'font-arabic-modern' : ''"
                   >
-                    {{ currentLang === 'ar' ? 'عرض الأعمال' : 'View Projects' }}
+                    {{ currentLang === 'ar' ? 'عرض المزيد' : 'View More' }}
                   </span>
-                </div>
+                </router-link>
               </div>
 
-            </router-link>
+            </div>
           </swiper-slide>
         </swiper-container>
       </div>
@@ -101,19 +97,16 @@
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { register } from 'swiper/element/bundle';
 
-// صورة الرخام الفاخرة للزر والخلفية
 import BtnBgImage from '@/assets/puplic_wepsite/aboutUs/images/white_marble.jpg';
 import marbleBgImage from '@/assets/puplic_wepsite/aboutUs/images/white_marble.jpg';
 
-// صور الخدمات الحقيقية الجديدة
-import kitchensImg from '@/assets/puplic_wepsite/services/images/Kitchen.jpg';
-import villasImg from '@/assets/puplic_wepsite/services/images/villas.jpg';
-import stairsImg from '@/assets/puplic_wepsite/services/images/stairs.webp';
-import waterjetImg from '@/assets/puplic_wepsite/services/images/waterjet.jpg';
-import fountainsImg from '@/assets/puplic_wepsite/services/images/fountains.webp';
-import tablesImg from '@/assets/puplic_wepsite/services/images/tables.webp';
+import Statuario from '@/assets/puplic_wepsite/products/italian/Statuario_Italian.jpg';
+import Crema_Marfil from '@/assets/puplic_wepsite/products/spanish/Crema_Marfil.webp';
+import black_galaxy from '@/assets/puplic_wepsite/products/granite/black_galaxy.jpg';
+import Calacatta_White from '@/assets/puplic_wepsite/products/quartz/Calacatta_White.jpg';
+import Gold_Circular_Waterjet_MedallionVein from '@/assets/puplic_wepsite/products/Waterjet/Circular_Waterjet_Medallion.jpg';
+import Portoro_Black from '@/assets/puplic_wepsite/products/italian/Portoro_Black.jpg';
 
-// تسجيل Swiper Web Components
 register();
 
 const swiperEl = ref(null);
@@ -125,22 +118,71 @@ const getStoredLang = () => {
 const currentLang = ref(getStoredLang());
 let observer = null;
 
-// الربط مع الأقسام الفعلية للخدمات
-const servicesData = ref([
-  { id: 'kitchens', title_ar: 'المطابخ الفاخرة', title_en: 'Luxury Kitchens', image: kitchensImg, link: '/services/kitchens' },
-  { id: 'villas', title_ar: 'تشطيب الفلل', title_en: 'Villa Cladding', image: villasImg, link: '/services/villas' },
-  { id: 'stairs', title_ar: 'أدراج الرخام', title_en: 'Marble Stairs', image: stairsImg, link: '/services/stairs' },
-  { id: 'waterjet', title_ar: 'تصاميم الواترجيت', title_en: 'Waterjet Designs', image: waterjetImg, link: '/services/waterjet' },
-  { id: 'fountains', title_ar: 'النوافير وشلالات الماء', title_en: 'Fountains & Waterfalls', image: fountainsImg, link: '/services/fountains' },
-  { id: 'tables', title_ar: 'طاولات الرخام', title_en: 'Marble Tables', image: tablesImg, link: '/services/tables' }
+// إضافة حقل cat_slug لربط كل عنصر بالقسم المناسب
+const productsData = ref([
+  {
+    id: 101,
+    cat_slug: 'italian',
+    cat_ar: 'رخام إيطالي',
+    cat_en: 'Italian Marble',
+    title_ar: 'رخام ستاتواريو إيطالي',
+    title_en: 'Statuario Italian Marble',
+    image: Statuario
+  },
+  {
+    id: 203,
+    cat_slug: 'spanish',
+    cat_ar: 'رخام إسباني',
+    cat_en: 'Spanish Marble',
+    title_ar: 'رخام كريما مارفيل',
+    title_en: 'Crema Marfil Marble',
+    image: Crema_Marfil
+  },
+  {
+    id: 107,
+    cat_slug: 'italian',
+    cat_ar: 'رخام إيطالي',
+    cat_en: 'Italian Marble',
+    title_ar: 'رخام بورتورو أسود',
+    title_en: 'Portoro Black Marble',
+    image: Portoro_Black
+  },
+  {
+    id: 301,
+    cat_slug: 'granite',
+    cat_ar: 'جرانيت طبيعي',
+    cat_en: 'Natural Granite',
+    title_ar: 'جرانيت أسود جالكسي',
+    title_en: 'Black Galaxy Granite',
+    image: black_galaxy
+  },
+  {
+    id: 401,
+    cat_slug: 'quartz',
+    cat_ar: 'كوارتز معالج',
+    cat_en: 'Engineered Quartz',
+    title_ar: 'كوارتز أبيض كلكتا',
+    title_en: 'Calacatta White Quartz',
+    image: Calacatta_White
+  },
+  {
+    id: 501,
+    cat_slug: 'waterjet',
+    cat_ar: 'أعمال ووترجيت',
+    cat_en: 'Waterjet Art',
+    title_ar: 'سجادة ووترجيت دائرية',
+    title_en: 'Circular Waterjet Medallion',
+    image: Gold_Circular_Waterjet_MedallionVein
+  }
 ]);
 
-const currentServices = computed(() => {
-  return servicesData.value.map(item => ({
+const currentProducts = computed(() => {
+  return productsData.value.map(item => ({
     id: item.id,
+    categorySlug: item.cat_slug,
+    categoryTag: currentLang.value === 'ar' ? item.cat_ar : item.cat_en,
     title: currentLang.value === 'ar' ? item.title_ar : item.title_en,
-    image: item.image,
-    link: item.link
+    image: item.image
   }));
 });
 

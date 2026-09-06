@@ -1,11 +1,22 @@
 <template>
   <div
-    class="min-h-screen bg-stone-950 text-stone-100 flex flex-col justify-between selection:bg-amber-500 selection:text-stone-950 transition-all duration-300"
+    class="relative min-h-screen bg-stone-950 text-stone-100 flex flex-col justify-between selection:bg-amber-500 selection:text-stone-950 transition-all duration-300 overflow-hidden"
     :dir="currentLang === 'ar' ? 'rtl' : 'ltr'"
   >
-    <Navbar />
+    <!-- Background Marble Image with Soft Overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <img
+        :src="bgMarble"
+        alt="Marble Background"
+        class="w-full h-full object-cover object-center opacity-40"
+      />
+      <!-- تظليل خفيف للحفاظ على تباين النصوص والقراءات -->
+      <div class="absolute inset-0 bg-stone-950/80 backdrop-blur-[1px]"></div>
+    </div>
 
-    <main class="flex-1 pt-28 pb-20 px-4 sm:px-6 lg:px-8">
+    <Navbar class="relative z-10" />
+
+    <main class="relative z-10 flex-1 pt-28 pb-20 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto space-y-16">
 
         <!-- Main Header -->
@@ -13,10 +24,10 @@
           <span class="inline-block text-amber-400 font-bold text-xs sm:text-sm tracking-widest uppercase bg-amber-500/10 border border-amber-500/20 px-4 py-1.5 rounded-full backdrop-blur-md">
             {{ currentLang === 'ar' ? 'خدماتنا الشاملة' : 'Our Comprehensive Services' }}
           </span>
-          <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">
+          <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight drop-shadow-md">
             {{ currentLang === 'ar' ? 'أعمال وإبداعات عالم الرخام والمطابخ' : 'Kitchen & Marble World Services' }}
           </h1>
-          <p class="text-stone-400 text-sm sm:text-base leading-relaxed">
+          <p class="text-stone-300 text-sm sm:text-base leading-relaxed drop-shadow-sm font-medium">
             {{ currentLang === 'ar'
                 ? 'نقدم أحدث حلول التصميم والتصنيع والتركيب للرخام الطبيعي والصناعي والجرانيت بأعلى معايير الجودة العالمية.'
                 : 'Providing top-tier custom design, fabrication, and installation of natural marble, quartz, and granite.'
@@ -29,7 +40,7 @@
           <div
             v-for="service in mainServices"
             :key="service.id"
-            class="bg-stone-900 border border-stone-800 rounded-3xl overflow-hidden hover:border-amber-500/50 transition-all duration-500 flex flex-col justify-between group shadow-2xl relative"
+            class="bg-stone-900/85 backdrop-blur-md border border-stone-800/80 rounded-3xl overflow-hidden hover:border-amber-500/50 transition-all duration-500 flex flex-col justify-between group shadow-2xl relative hover:-translate-y-1"
           >
             <!-- Badge -->
             <div
@@ -52,12 +63,12 @@
             </div>
 
             <!-- Content Area -->
-            <div class="p-6 space-y-5 flex-1 flex flex-col justify-between relative z-10">
+            <div class="p-6 space-y-5 flex-1 flex flex-col justify-between relative z-10 bg-stone-900/90">
               <div class="space-y-3">
                 <h2 class="text-2xl font-bold text-white group-hover:text-amber-400 transition-colors duration-300">
                   {{ currentLang === 'ar' ? service.titleAr : service.titleEn }}
                 </h2>
-                <p class="text-stone-400 text-sm leading-relaxed line-clamp-3">
+                <p class="text-stone-300 text-sm leading-relaxed line-clamp-3">
                   {{ currentLang === 'ar' ? service.shortDescAr : service.shortDescEn }}
                 </p>
 
@@ -77,7 +88,7 @@
               <!-- Button to Detailed View -->
               <router-link
                 :to="`/services/${service.id}`"
-                class="w-full py-3 rounded-xl border border-stone-700 bg-stone-800/80 hover:bg-amber-500 hover:text-stone-950 hover:border-amber-500 text-amber-400 font-bold text-sm transition-all duration-300 text-center block shadow-md group-hover:shadow-amber-500/20"
+                class="w-full py-3 rounded-xl border border-stone-700 bg-stone-800/80 hover:bg-amber-500 hover:text-stone-950 hover:border-amber-500 text-amber-400 font-bold text-sm transition-all duration-300 text-center block shadow-md group-hover:shadow-amber-500/20 active:scale-95"
               >
                 {{ currentLang === 'ar' ? 'استعرض التفاصيل والأعمال (7 مشاريع)' : 'View Details & Portfolio (7 Projects)' }}
               </router-link>
@@ -88,7 +99,7 @@
       </div>
     </main>
 
-    <Footer />
+    <Footer class="relative z-10" />
   </div>
 </template>
 
@@ -96,7 +107,9 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import Navbar from '@/components/User/Navbar.vue';
 import Footer from '@/components/User/footer.vue';
-import defaultHero from '@/assets/puplic_wepsite/navebar/images/button_hover.jpg';
+
+// استيراد صورة خلفية الرخام
+import bgMarble from '@/assets/puplic_wepsite/navebar/images/button_hover.jpg';
 
 import stairs from '@/assets/puplic_wepsite/services/images/stairs.webp';
 import fountains from '@/assets/puplic_wepsite/services/images/fountains.webp';

@@ -6,20 +6,24 @@
 
     <!-- Main Content Wrapper -->
     <main
-      class="flex-1 pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-fixed"
+      class="flex-1 pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-fixed select-none"
       :style="{ backgroundImage: `url(${bgImage})` }"
     >
       <div class="max-w-7xl mx-auto space-y-10">
 
-        <!-- Header Section -->
-        <div class="text-center space-y-3">
+        <!-- Header Section (Matching Image Design) -->
+        <div class="text-center mb-10 sm:mb-14 px-4">
           <h1
-            class="text-3xl sm:text-5xl font-black bg-gradient-to-r from-white via-amber-200 to-amber-500 bg-clip-text text-transparent drop-shadow-md"
-            :class="[currentLang === 'ar' ? 'font-sans' : 'font-serif']"
+            class="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-wide mb-3 drop-shadow-md"
+            :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
           >
             {{ currentLang === 'ar' ? 'معرض المنتجات' : 'Products Showcase' }}
           </h1>
-          <p class="text-stone-400 text-sm sm:text-base max-w-2xl mx-auto">
+
+          <!-- Orange/Amber Underline Divider -->
+          <div class="w-16 sm:w-20 h-1 sm:h-1.5 bg-amber-500 mx-auto rounded-full mb-4 shadow-sm"></div>
+
+          <p class="text-stone-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
             {{
               currentLang === 'ar'
                 ? 'استكشف تشكيلتنا الفاخرة من الرخام، الجرانيت، الكوارتز، وأعمال الووترجيت المصممة بأعلى معايير الجودة.'
@@ -74,7 +78,7 @@
           </button>
         </div>
 
-        <!-- Dynamic Category Intro Banner (تظهر فقط عند اختيار تصنيف محدد) -->
+        <!-- Dynamic Category Intro Banner -->
         <transition name="fade">
           <div
             v-if="currentCategoryInfo"
@@ -97,7 +101,7 @@
             <div class="flex-1 space-y-3 text-center md:text-start">
               <h2
                 class="text-2xl sm:text-3xl font-extrabold text-amber-400"
-                :class="[currentLang === 'ar' ? 'font-sans' : 'font-serif']"
+                :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
               >
                 {{ currentLang === 'ar' ? currentCategoryInfo.titleAr : currentCategoryInfo.titleEn }}
               </h2>
@@ -139,7 +143,7 @@
               <div class="space-y-2">
                 <h3
                   class="text-lg font-bold text-stone-100 group-hover:text-amber-400 transition-colors"
-                  :class="[currentLang === 'ar' ? 'font-sans' : 'font-serif']"
+                  :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
                 >
                   {{ currentLang === 'ar' ? product.titleAr : product.titleEn }}
                 </h3>
@@ -297,6 +301,7 @@
 
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
@@ -609,14 +614,14 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.4s ease, transform 0.4s ease;
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap');
+
+.font-arabic-modern {
+  font-family: 'Tajawal', sans-serif !important;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
+.font-royal-en {
+  font-family: 'Cinzel', serif !important;
+  letter-spacing: 0.5px;
 }
 </style>

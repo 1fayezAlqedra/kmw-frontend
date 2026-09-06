@@ -134,12 +134,15 @@ import marbleBgImage from '../../assets/puplic_wepsite/Hero_section/images/hero_
 import heroBgImage from '../../assets/puplic_wepsite/navebar/images/navbarnackground.png';
 
 // صور السلايدر
-import slide1 from '../../assets/puplic_wepsite/Hero_section/images/marble_mounten.jpg';
-import slide2 from '../../assets/puplic_wepsite/Hero_section/images/Marble_slabs.jpg';
+import slide1 from '../../assets/puplic_wepsite/Hero_section/images/Marble_slabs.jpg';
+import slide2 from '../../assets/puplic_wepsite/Hero_section/images/h1.jpg';
+import slide3 from '../../assets/puplic_wepsite/Hero_section/images/h2.jpg';
+import slide4 from '../../assets/puplic_wepsite/Hero_section/images/h3.jpg';
+import slide5 from '../../assets/puplic_wepsite/Hero_section/images/h4.jpg';
 
 const slides = ref([
   slide1,
-  slide2
+  slide2 , slide3,slide4,slide5
 ]);
 
 // قراءة اللغة المخزنة لضمان التطابق مع النافبار وباقي الموقع

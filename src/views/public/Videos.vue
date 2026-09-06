@@ -1,14 +1,14 @@
 <template>
   <div class="relative min-h-screen bg-stone-950 text-stone-100 font-sans flex flex-col justify-between selection:bg-amber-500 selection:text-stone-950">
 
-    <!-- Background Image with Soft Overlay (Matching Image 2) -->
+    <!-- Background Image with Soft Overlay -->
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
       <img
         :src="bgMarble"
         alt="Marble Background"
         class="w-full h-full object-cover object-center opacity-70"
       />
-      <!-- تظليل خفيف جداً للحفاظ على تباين النصوص مع إبراز عروق الرخام بشكل تام -->
+      <!-- تظليل خفيف للحفاظ على تباين النصوص مع إبراز عروق الرخام -->
       <div class="absolute inset-0 bg-stone-950/30"></div>
     </div>
 
@@ -67,8 +67,8 @@
           <div class="relative w-full aspect-video bg-black overflow-hidden flex items-center justify-center">
             <iframe
               v-if="video.type === 'youtube'"
-              :src="video.embedUrl"
-              :title="video.titleAr"
+              :src="getEmbedUrl(video)"
+              :title="isAr ? video.titleAr : video.titleEn"
               class="w-full h-full border-0 group-hover:scale-102 transition-transform duration-500"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
@@ -77,7 +77,7 @@
 
             <iframe
               v-else-if="video.type === 'instagram'"
-              :src="`${video.embedUrl}embed`"
+              :src="getEmbedUrl(video)"
               class="w-full h-full border-0 group-hover:scale-102 transition-transform duration-500"
               frameborder="0"
               scrolling="no"
@@ -126,7 +126,7 @@
         </button>
       </div>
 
-      <!-- Conditional Pagination: يظهر فقط إذا كان عدد العناصر المفلترة أكبر من itemsPerPage -->
+      <!-- Conditional Pagination -->
       <div
         v-if="filteredVideos.length > itemsPerPage"
         class="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-stone-800/80"
@@ -194,8 +194,28 @@ const isAr = computed(() => currentLang.value === 'ar');
 
 const searchQuery = ref('');
 const currentPage = ref(1);
-const itemsPerPage = 6; // يمكن تعديل العدد هنا للتحكم بموعد ظهور الترقيم الصفحي
+const itemsPerPage = 6;
 let observer = null;
+
+// دالة تحويل أي رابط يوتيوب أو إنستغرام عادي إلى رابط Embed يعمل داخل iframe
+const getEmbedUrl = (video) => {
+  if (!video.url) return '';
+
+  if (video.type === 'youtube') {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = video.url.match(regExp);
+    const videoId = (match && match[2].length === 11) ? match[2] : null;
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : video.url;
+  }
+
+  if (video.type === 'instagram') {
+    let cleanUrl = video.url.split('?')[0];
+    if (!cleanUrl.endsWith('/')) cleanUrl += '/';
+    return `${cleanUrl}embed`;
+  }
+
+  return video.url;
+};
 
 const videosList = ref([
   {
@@ -207,8 +227,8 @@ const videosList = ref([
     titleEn: 'Installing Calacatta Marble Flooring for Villa Majlis',
     descAr: 'خطوات تركيب وقص رخام الكالكاتا الإيطالي مع ضبط السيمترية وعروق الرخام بشكل متناغم.',
     descEn: 'Detailed installation process of Italian Calacatta marble with precise vein matching.',
-    embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-    duration: '04:15'
+    url: 'https://youtu.be/mslWlOYyahA?si=FqERyd5GZW0RZ11X',
+    duration: '03:22'
   },
   {
     id: 2,
@@ -219,7 +239,7 @@ const videosList = ref([
     titleEn: 'Modern Kitchen Installation with Natural Granite Countertop',
     descAr: 'استعراض لمراحل تشطيب مطبخ عالي الجودة متضمن جزيرة رخامية وإضاءات خفية.',
     descEn: 'Showcasing high-end kitchen setup featuring a marble island and embedded lighting.',
-    embedUrl: 'https://www.instagram.com/p/C0xxxxxxxxx/',
+    url: 'https://www.instagram.com/reel/DMfG7gHy6ty/',
     duration: 'Reels'
   },
   {
@@ -231,7 +251,7 @@ const videosList = ref([
     titleEn: 'Modern Villa Tour: Marble Facades and Water Features',
     descAr: 'تغطية شاملة لأعمال توريد وتكسية الواجهات الخارجية بالرخام الطبيعي المعالج.',
     descEn: 'Comprehensive tour of exterior natural marble cladding and water features.',
-    embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    url: 'https://www.youtube.com/embed/cEqM0LTnC0w',
     duration: '08:45'
   },
   {
@@ -243,7 +263,7 @@ const videosList = ref([
     titleEn: 'Precision Waterjet Cutting for Marble Entrance Medallion',
     descAr: 'كيفية تنفيذ وتجميع اللوحات والسجاد الرخامي المعقد باستخدام تقنية تقطيع الووترجيت.',
     descEn: 'How intricate marble medallions are cut and assembled using CNC waterjet technology.',
-    embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    url: 'https://www.youtube.com/embed/F85VxH2OE14',
     duration: '03:50'
   },
   {
@@ -255,7 +275,7 @@ const videosList = ref([
     titleEn: 'Dark Emperador Marble Staircase Cladding for Luxury Villa',
     descAr: 'فن تفصيل وتقفيل أطراف الدرج وتلميعه ميكانيكياً لإعطاء لمعان مرآة مستمر.',
     descEn: 'Expert staircase wrapping using Dark Emperador marble with mechanical mirror polishing.',
-    embedUrl: 'https://www.instagram.com/p/C0xxxxxxxxx/',
+    url: 'https://www.instagram.com/reel/DMfG7gHy6ty/',
     duration: 'Reels'
   },
   {
@@ -267,7 +287,7 @@ const videosList = ref([
     titleEn: 'Custom Integrated Marble Sinks for Classic Kitchen',
     descAr: 'تفاصيل دقيقة لدمج الأحواض والمغاسل المصنوعة كلياً من الرخام في كاونتر المطبخ.',
     descEn: 'Seamless integration of custom solid marble sinks into kitchen countertops.',
-    embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    url: 'https://www.youtube.com/embed/-qNmlG3tQP4',
     duration: '04:40'
   },
   {
@@ -279,7 +299,7 @@ const videosList = ref([
     titleEn: 'Luxury Rosa Marble Bathroom Wall Cladding',
     descAr: 'تنفيذ أعمال الديكورات الرخامية للحمامات الرئيسية والمغاسل الرخامية.',
     descEn: 'Execution of luxury marble bathroom wall cladding and custom sinks.',
-    embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    url: 'https://www.youtube.com/embed/SGbb4_MD4vA',
     duration: '05:10'
   }
 ]);

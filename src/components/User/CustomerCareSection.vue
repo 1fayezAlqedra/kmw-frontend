@@ -80,12 +80,26 @@ import { ref, onMounted, onUnmounted } from 'vue';
 // صورة الرخام الفاخرة
 import sectionBgImage from '@/assets/puplic_wepsite/aboutUs/images/white_marble.jpg';
 
-const currentLang = ref(document.documentElement.getAttribute('lang') || 'ar');
+// دالة جلب اللغة الحالية من local storage أو من عنصر html
+const getStoredLang = () => {
+  return localStorage.getItem('locale') || localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'ar';
+};
+
+const currentLang = ref(getStoredLang());
 let observer = null;
 
+const handleStorageChange = (event) => {
+  if (event.key === 'locale' || event.key === 'lang') {
+    currentLang.value = getStoredLang();
+  }
+};
+
 onMounted(() => {
+  currentLang.value = getStoredLang();
+
+  // 1. مراقبة التغييرات في DOM على عنصر html
   observer = new MutationObserver(() => {
-    const newLang = document.documentElement.getAttribute('lang') || 'ar';
+    const newLang = getStoredLang();
     if (currentLang.value !== newLang) {
       currentLang.value = newLang;
     }
@@ -95,14 +109,18 @@ onMounted(() => {
     attributes: true,
     attributeFilter: ['lang', 'dir']
   });
+
+  // 2. مراقبة التغييرات في localStorage مباشرة
+  window.addEventListener('storage', handleStorageChange);
 });
 
 onUnmounted(() => {
   if (observer) observer.disconnect();
+  window.removeEventListener('storage', handleStorageChange);
 });
 </script>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap');
 
 .font-arabic-modern {
