@@ -23,7 +23,5 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    // استخدام esbuild لتصغير CSS بدلاً من lightningcss
-    cssMinify: 'esbuild',
   },
 })
