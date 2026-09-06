@@ -1,0 +1,1 @@
+var e=`/kmw-frontend/assets/png/logo-Ci4NXlxv.png`;export{e as t};
