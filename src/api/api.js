@@ -1,10 +1,38 @@
 import axios from 'axios'
 
 /**
+ * Server Base URL & Storage URL
+ */
+export const SERVER_URL = 'http://127.0.0.1:8000'
+export const STORAGE_URL = `${SERVER_URL}/storage`
+
+/**
+ * Helper utility to convert relative DB image paths to absolute HTTP URLs
+ * Input: "project_categories/dKZBo6FFNJ6ioNmVQsgAwuPPrWWeymB3lykyMYVq.png"
+ * Output: "http://127.0.0.1:8000/storage/project_categories/dKZBo6FFNJ6ioNmVQsgAwuPPrWWeymB3lykyMYVq.png"
+ */
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return ''
+
+  // If already absolute URL
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+
+  const cleanPath = imagePath.replace(/^\//, '')
+
+  if (cleanPath.startsWith('storage/')) {
+    return `${SERVER_URL}/${cleanPath}`
+  }
+
+  return `${STORAGE_URL}/${cleanPath}`
+}
+
+/**
  * Custom Axios instance configured for KMW Application API.
  */
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/v1',
+  baseURL: `${SERVER_URL}/api/v1`,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -20,6 +48,11 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
+    if (config.data instanceof FormData) {
+      config.headers['Content-Type'] = 'multipart/form-data'
+    }
+
     return config
   },
   (error) => {
@@ -33,21 +66,30 @@ apiClient.interceptors.request.use(
  */
 apiClient.interceptors.response.use(
   (response) => {
-    // Return standard response object to maintain predictable API contracts
     return response
   },
   (error) => {
-    // Handle unauthorized access (401) globally
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('auth_token')
       localStorage.removeItem('token')
-
-      // Optional: Redirect to login page on unauthorized session
-      // window.location.href = '/login'
+      localStorage.removeItem('token_data')
+      localStorage.removeItem('user')
+      localStorage.removeItem('role')
     }
     return Promise.reject(error)
   },
 )
+
+/**
+ * Project Categories API Endpoints
+ */
+export const projectCategoriesApi = {
+  getProjectCategories: () => apiClient.get('/project-categories'),
+  getProjectCategory: (id) => apiClient.get(`/project-categories/${id}`),
+  createProjectCategory: (data) => apiClient.post('/project-categories', data),
+  updateProjectCategory: (id, data) => apiClient.post(`/project-categories/${id}?_method=PUT`, data),
+  deleteProjectCategory: (id) => apiClient.delete(`/project-categories/${id}`),
+}
 
 /**
  * System Settings API Endpoints

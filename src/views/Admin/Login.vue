@@ -82,24 +82,29 @@ const handleLogin = () => {
   loading.value = true
   errorMessage.value = ''
 
-  // تجميع البيانات لإرسالها
   const credentials = {
     email: email.value,
     password: password.value
   }
 
-  // إرسال الطلب الفعلي عبر Axios للباك إيند
   authService.login(credentials)
     .then(response => {
       if (response.data.success) {
-        // لقط البيانات الحقيقية الصادرة من الـ Laravel Sanctum
-        const token = response.data.access_token
+        const token = response.data.access_token || response.data.token
         const userData = response.data.user || response.data.data
 
-        // 1. تخزين التوكن في المتصفح
-        localStorage.setItem('token', token)
+        // 1. حساب وقت الانتهاء بعد ساعتين (بالملي ثانية)
+        const twoHours = 2 * 60 * 60 * 1000
+        const tokenData = {
+          token: token,
+          expiry: new Date().getTime() + twoHours
+        }
 
-        // 2. تخزين كائن المستخدم والـ Role للتحقق من الصلاحيات في الفرونت إند
+        // 2. تخزين التوكن ووقت الانتهاء في localStorage للاستخدام في Router Guard
+        localStorage.setItem('token_data', JSON.stringify(tokenData))
+        localStorage.setItem('token', token) // للطلبات المباشرة إذا لزم الأمر
+
+        // 3. تخزين بيانات المستخدم والصلاحيات
         if (userData) {
           localStorage.setItem('user', JSON.stringify(userData))
           if (userData.role) {
@@ -107,12 +112,11 @@ const handleLogin = () => {
           }
         }
 
-        // 3. التوجيه المباشر والآمن للداشبورد
+        // 4. التوجيه المباشر للداشبورد
         router.push('/admin/dashboard')
       }
     })
     .catch(error => {
-      // عرض تفاصيل الخطأ القادم من السيرفر
       if (error.response && error.response.data) {
         errorMessage.value = error.response.data.message || 'Invalid email or password.'
       } else {

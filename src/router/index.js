@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
   // --------------------------------------------------------------------------
-  // 1. Client Landing Page Route (الصفحات العامة المتاحة حالياً)
+  // 1. Client Landing Page Route (الصفحات العامة)
   // --------------------------------------------------------------------------
   {
     path: '/',
@@ -21,9 +21,8 @@ const routes = [
   },
 
   // --------------------------------------------------------------------------
-  // 2. Services Pages (معطلة مؤقتاً)
+  // 2. Services Pages
   // --------------------------------------------------------------------------
-  /*
   {
     path: '/services',
     name: 'Services',
@@ -34,12 +33,10 @@ const routes = [
     name: 'service-detail',
     component: () => import('@/views/public/ServiceDetailView.vue'),
   },
-  */
 
   // --------------------------------------------------------------------------
-  // 3. Client Pages (معطلة مؤقتاً)
+  // 3. Client Pages
   // --------------------------------------------------------------------------
-  /*
   {
     path: '/products',
     name: 'Products',
@@ -50,16 +47,15 @@ const routes = [
     name: 'Videos',
     component: () => import('../views/public/Videos.vue'),
   },
-  */
 
   // --------------------------------------------------------------------------
-  // 4. Authentication Routes (معطلة مؤقتاً)
+  // 4. Authentication Routes
   // --------------------------------------------------------------------------
-  /*
   {
     path: '/login',
     name: 'Login',
     component: () => import('../views/Admin/Login.vue'),
+    meta: { requiresGuest: true }
   },
   {
     path: '/forgot-password',
@@ -71,15 +67,14 @@ const routes = [
     name: 'ResetPassword',
     component: () => import('../views/Admin/ResetPassword.vue'),
   },
-  */
 
   // --------------------------------------------------------------------------
-  // 5. Admin Dashboard Routes (معطلة مؤقتاً)
+  // 5. Admin Dashboard Routes (محمية)
   // --------------------------------------------------------------------------
-  /*
   {
     path: '/admin',
     component: () => import('../layouts/AdminLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: '',
@@ -96,7 +91,7 @@ const routes = [
         name: 'TeamManagement',
         component: () => import('../views/Admin/TeamManagement.vue'),
       },
-      // Categories
+      // Categories (Product Categories)
       {
         path: 'categories',
         name: 'ShowCategories',
@@ -111,6 +106,22 @@ const routes = [
         path: 'edit-category/:id',
         name: 'EditCategory',
         component: () => import('../views/Admin/EditCategory.vue'),
+      },
+      // Project Categories
+      {
+        path: 'project-categories',
+        name: 'showProjectCategories',
+        component: () => import('../views/Admin/showProjectCategories.vue'),
+      },
+      {
+        path: 'add-project-category',
+        name: 'AddProjectCategory',
+        component: () => import('../views/Admin/AddProjectCategory.vue'),
+      },
+      {
+        path: 'edit-project-category/:id',
+        name: 'EditProjectCategory',
+        component: () => import('../views/Admin/EditProjectCategory.vue'),
       },
       // Products
       {
@@ -174,10 +185,9 @@ const routes = [
       },
     ],
   },
-  */
 
   // --------------------------------------------------------------------------
-  // 6. 404 Fallback (توجيه أي مسار معطل أو غير موجود للصفحة الرئيسية)
+  // 6. 404 Fallback
   // --------------------------------------------------------------------------
   {
     path: '/:pathMatch(.*)*',
@@ -191,6 +201,45 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     return savedPosition ? savedPosition : { top: 0 }
   },
+})
+
+// --------------------------------------------------------------------------
+// Navigation Guard: فحص التوكن ومدى صلاحيته الزمنيّة (ساعتان)
+// --------------------------------------------------------------------------
+router.beforeEach((to) => {
+  const tokenDataString = localStorage.getItem('token_data')
+  let validToken = null
+
+  if (tokenDataString) {
+    try {
+      const tokenData = JSON.parse(tokenDataString)
+      const now = new Date().getTime()
+
+      // التحقق هل انتهت الساعتان أم لا
+      if (now > tokenData.expiry) {
+        // انتهت الصلاحية: تنظيف البيانات المحفوظة
+        localStorage.removeItem('token_data')
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('role')
+      } else {
+        validToken = tokenData.token
+      }
+    } catch (e) {
+      // إذا كان الملف غير صالح
+      localStorage.removeItem('token_data')
+      localStorage.removeItem('token')
+    }
+  }
+
+  // الحماية حسب إعدادات الصفحات وإرجاع كائن التوجيه المباشر بدلاً من next()
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!validToken) {
+      return { name: 'Login' }
+    }
+  } else if (to.matched.some(record => record.meta.requiresGuest) && validToken) {
+    return { name: 'AdminDashboard' }
+  }
 })
 
 export default router
