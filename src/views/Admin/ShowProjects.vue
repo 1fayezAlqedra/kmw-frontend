@@ -17,7 +17,7 @@
       </RouterLink>
     </div>
 
-    <!-- 📊 Stats & Filter Toolbar Bar (فوق الجدول) -->
+    <!-- 📊 Stats & Filter Toolbar Bar -->
     <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
 
       <!-- Counter: Total Projects -->
@@ -77,15 +77,13 @@
       <!-- Datatable Canvas -->
       <div v-else class="w-full">
 
-        <!-- 1. Desktop Table View (Hidden on Mobile) -->
+        <!-- 1. Desktop Table View -->
         <table class="w-full text-left border-collapse hidden md:table">
           <thead>
             <tr class="bg-[#F7F4F0]/60 border-b border-[#EAE3DA]">
               <th class="p-4 md:p-5 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-wider w-24">Preview</th>
               <th class="p-4 md:p-5 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-wider">Project Identity</th>
-              <!-- 🏷️ Category Slug Header -->
               <th class="p-4 md:p-5 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-wider w-36">Category Slug</th>
-              <!-- 📝 Description Bundle Header -->
               <th class="p-4 md:p-5 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-wider hidden md:table-cell">Description Bundle (EN / AR)</th>
               <th class="p-4 md:p-5 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-wider text-center w-32">Media Count</th>
               <th class="p-4 md:p-5 text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-wider text-right w-36">Actions</th>
@@ -94,14 +92,15 @@
           <tbody class="divide-y divide-[#EAE3DA]/50">
             <tr
               v-for="project in filteredProjects"
-              :key="project.id"
+              :key="project?.id"
               class="hover:bg-[#F7F4F0]/20 transition-colors duration-150"
             >
-              <!-- Thumbnail Image Bundle Preview -->
+              <!-- Thumbnail Preview -->
               <td class="p-4 md:p-5 vertical-middle">
                 <div class="w-16 aspect-[4/3] rounded-lg border border-[#EAE3DA] bg-[#F7F4F0] p-0.5 overflow-hidden shadow-xs">
                   <img
                     :src="getProjectCoverImage(project)"
+                    :alt="project?.name_en || 'Project'"
                     class="w-full h-full object-cover rounded-md"
                     @error="handleImageError"
                   />
@@ -111,38 +110,38 @@
               <!-- Multilingual Identities -->
               <td class="p-4 md:p-5 vertical-middle">
                 <div class="flex flex-col space-y-1">
-                  <span class="text-xs md:text-sm font-black text-slate-800 tracking-wide">{{ project.name_en }}</span>
-                  <span class="text-xs md:text-sm font-bold text-slate-500 font-sans tracking-normal" dir="rtl">{{ project.name_ar }}</span>
+                  <span class="text-xs md:text-sm font-black text-slate-800 tracking-wide">{{ project?.name_en || 'N/A' }}</span>
+                  <span class="text-xs md:text-sm font-bold text-slate-500 font-sans tracking-normal" dir="rtl">{{ project?.name_ar || 'غير محدد' }}</span>
                 </div>
               </td>
 
-              <!-- 🏷️ Category Slug Badge Column -->
+              <!-- Category Slug -->
               <td class="p-4 md:p-5 vertical-middle">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-950/5 border border-amber-950/10 text-[11px] font-black text-amber-950 lowercase tracking-tight">
-                  /{{ project.category?.slug || 'uncategorized' }}
+                  /{{ project?.category?.slug || 'uncategorized' }}
                 </span>
               </td>
 
-              <!-- 📝 Desktop Descriptions Bundle Column -->
+              <!-- Descriptions Bundle -->
               <td class="p-4 md:p-5 vertical-middle hidden md:table-cell max-w-xs">
                 <div class="flex flex-col space-y-1">
-                  <p class="text-xs text-slate-500 font-medium truncate" :title="project.description_en">{{ project.description_en }}</p>
-                  <p class="text-xs text-slate-400 font-sans font-medium truncate text-right" dir="rtl" :title="project.description_ar">{{ project.description_ar }}</p>
+                  <p class="text-xs text-slate-500 font-medium truncate" :title="project?.description_en">{{ project?.description_en || 'N/A' }}</p>
+                  <p class="text-xs text-slate-400 font-sans font-medium truncate text-right" dir="rtl" :title="project?.description_ar">{{ project?.description_ar || 'لا يوجد وصف' }}</p>
                 </div>
               </td>
 
               <!-- Media Analytics Counter -->
               <td class="p-4 md:p-5 vertical-middle text-center">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-[#F7F4F0] border border-[#EAE3DA] text-[10px] font-black text-slate-600 uppercase tracking-wider">
-                  {{ project.images?.length || 0 }} Photos
+                  {{ project?.images?.length || 0 }} Photos
                 </span>
               </td>
 
-              <!-- Actions Group Grid -->
+              <!-- Actions Group -->
               <td class="p-4 md:p-5 vertical-middle text-right">
                 <div class="flex items-center justify-end space-x-2">
-                  <!-- Edit Action -->
                   <RouterLink
+                    v-if="project?.id"
                     :to="`/admin/edit-project/${project.id}`"
                     class="p-2 text-slate-400 hover:text-amber-950 hover:bg-[#F7F4F0] rounded-xl border border-transparent hover:border-[#EAE3DA] transition-all duration-200 cursor-pointer"
                     title="Edit Asset"
@@ -152,8 +151,8 @@
                     </svg>
                   </RouterLink>
 
-                  <!-- Delete Trigger -->
                   <button
+                    v-if="project?.id"
                     type="button"
                     @click="deleteProject(project.id)"
                     class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50/50 rounded-xl border border-transparent hover:border-red-100 transition-all duration-200 cursor-pointer"
@@ -169,25 +168,26 @@
           </tbody>
         </table>
 
-        <!-- 2. Mobile Stacked View (Hidden on Desktop) -->
+        <!-- 2. Mobile Stacked View -->
         <div class="block md:hidden divide-y divide-[#EAE3DA]/60">
           <div
             v-for="project in filteredProjects"
-            :key="project.id"
+            :key="project?.id"
             class="p-4 flex flex-col space-y-4 bg-white"
           >
-            <!-- Top Section: ID, Category & Actions -->
+            <!-- Top Section -->
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
-                <span class="text-xs font-black text-slate-400">#{{ project.id }}</span>
+                <span class="text-xs font-black text-slate-400">#{{ project?.id }}</span>
                 <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-950/5 border border-amber-950/10 text-[10px] font-black text-amber-950 lowercase">
-                  /{{ project.category?.slug || 'uncategorized' }}
+                  /{{ project?.category?.slug || 'uncategorized' }}
                 </span>
               </div>
 
               <!-- Actions Group -->
               <div class="flex items-center space-x-2">
                 <RouterLink
+                  v-if="project?.id"
                   :to="`/admin/edit-project/${project.id}`"
                   class="p-2 text-slate-400 hover:text-amber-950 hover:bg-[#F7F4F0] rounded-xl border border-[#EAE3DA] transition-all duration-200 cursor-pointer bg-[#F7F4F0]/40"
                   title="Edit Asset"
@@ -198,6 +198,7 @@
                 </RouterLink>
 
                 <button
+                  v-if="project?.id"
                   type="button"
                   @click="deleteProject(project.id)"
                   class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50/50 rounded-xl border border-[#EAE3DA] transition-all duration-200 cursor-pointer bg-[#F7F4F0]/40"
@@ -210,25 +211,26 @@
               </div>
             </div>
 
-            <!-- Middle Section: Image and English Info -->
+            <!-- Middle Section -->
             <div class="flex items-start space-x-3">
               <div class="w-16 aspect-[4/3] rounded-lg border border-[#EAE3DA] bg-[#F7F4F0] p-0.5 overflow-hidden shadow-xs shrink-0">
                 <img
                   :src="getProjectCoverImage(project)"
+                  :alt="project?.name_en || 'Project'"
                   class="w-full h-full object-cover rounded-md"
                   @error="handleImageError"
                 />
               </div>
               <div class="flex flex-col space-y-1 min-w-0">
-                <span class="text-xs font-black text-slate-800 tracking-wide">{{ project.name_en }}</span>
-                <p class="text-[11px] text-slate-400 font-medium leading-relaxed line-clamp-2">{{ project.description_en }}</p>
+                <span class="text-xs font-black text-slate-800 tracking-wide">{{ project?.name_en || 'N/A' }}</span>
+                <p class="text-[11px] text-slate-400 font-medium leading-relaxed line-clamp-2">{{ project?.description_en || 'No description available.' }}</p>
               </div>
             </div>
 
-            <!-- Bottom Section: Arabic Container Box -->
+            <!-- Bottom Section -->
             <div class="bg-[#F7F4F0]/60 border border-[#EAE3DA] rounded-xl p-3 flex flex-col space-y-1" dir="rtl">
-              <span class="text-xs font-black text-slate-800 tracking-wide">{{ project.name_ar }}</span>
-              <p class="text-[11px] text-slate-400 font-sans font-medium leading-relaxed line-clamp-2">{{ project.description_ar }}</p>
+              <span class="text-xs font-black text-slate-800 tracking-wide">{{ project?.name_ar || 'غير محدد' }}</span>
+              <p class="text-[11px] text-slate-400 font-sans font-medium leading-relaxed line-clamp-2">{{ project?.description_ar || 'لا يوجد وصف متوفر.' }}</p>
             </div>
           </div>
         </div>
@@ -247,36 +249,42 @@ const isLoading = ref(true)
 const projects = ref([])
 const searchQuery = ref('')
 
-// عنوان السيرفر لتحميل الصور
-const storageBaseUrl = 'http://127.0.0.1:8000/storage/'
+const storageBaseUrl = import.meta.env.VITE_STORAGE_URL || 'http://127.0.0.1:8000/storage/'
 
-// صورة Fallback SVG
 const fallbackImage = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>'
 
 const handleImageError = (e) => {
+  e.target.onerror = null
   e.target.src = fallbackImage
 }
 
-// بناء رابط صورة الغلاف
 const getProjectCoverImage = (project) => {
-  if (project.images && project.images.length > 0) {
-    const mainImg = project.images.find(img => img.is_main) || project.images[0]
-    const path = mainImg.image_path || mainImg
+  if (!project) return fallbackImage
 
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-      return path
+  if (project.images && project.images.length > 0) {
+    const mainImg = project.images.find(img => img?.is_main) || project.images[0]
+    const rawPath = typeof mainImg === 'string' ? mainImg : (mainImg?.image_path || mainImg?.url || '')
+
+    if (!rawPath) return fallbackImage
+    if (rawPath.startsWith('http://') || rawPath.startsWith('https://') || rawPath.startsWith('data:')) {
+      return rawPath
     }
-    return `${storageBaseUrl}${path}`
+
+    const cleanBase = storageBaseUrl.endsWith('/') ? storageBaseUrl : `${storageBaseUrl}/`
+    const cleanPath = rawPath.startsWith('/') ? rawPath.substring(1) : rawPath
+
+    return `${cleanBase}${cleanPath}`
   }
   return fallbackImage
 }
 
-// 🔍 الفلترة المباشرة عبر محرك البحث
 const filteredProjects = computed(() => {
-  if (!searchQuery.value.trim()) return projects.value
+  const validProjects = (projects.value || []).filter(Boolean)
+
+  if (!searchQuery.value.trim()) return validProjects
 
   const q = searchQuery.value.toLowerCase().trim()
-  return projects.value.filter(project => {
+  return validProjects.filter(project => {
     const nameEn = project.name_en?.toLowerCase() || ''
     const nameAr = project.name_ar?.toLowerCase() || ''
     const descEn = project.description_en?.toLowerCase() || ''
@@ -291,28 +299,36 @@ const filteredProjects = computed(() => {
   })
 })
 
-// جلب المشاريع من الـ API
 const fetchProjects = async () => {
   isLoading.value = true
   try {
     const response = await api.get('/projects')
-    projects.value = response.data?.data || response.data || []
+
+    // استخراج المصفوفة بغض النظر عن طريقة تغليف Laravel لها
+    let extractedData = []
+    if (Array.isArray(response.data)) {
+      extractedData = response.data
+    } else if (Array.isArray(response.data?.data)) {
+      extractedData = response.data.data
+    } else if (Array.isArray(response.data?.data?.data)) {
+      // في حال وجود Pagination من Laravel
+      extractedData = response.data.data.data
+    }
+
+    projects.value = extractedData.filter(Boolean)
   } catch (error) {
     console.error('Error fetching marble projects:', error)
-    if (error.response?.status === 401) {
-      alert('Unauthorized! Please log in again.')
-    }
   } finally {
     isLoading.value = false
   }
 }
 
-// حذف المشروع عبر API
 const deleteProject = async (id) => {
+  if (!id) return
   if (confirm('Are you absolute sure you want to completely purge this marble project from the index?')) {
     try {
       await api.delete(`/projects/${id}`)
-      projects.value = projects.value.filter(p => p.id !== id)
+      projects.value = projects.value.filter(p => p && p.id !== id)
     } catch (error) {
       console.error('Failed to delete project:', error)
       alert(error.response?.data?.message || 'An error occurred while deleting the project.')

@@ -1,176 +1,136 @@
 <template>
-  <div class="w-full mx-auto animate-fade-in box-border bg-[#F7F4F0] min-h-screen p-4 sm:p-6 md:p-8" dir="ltr">
-
-    <!-- Header & Back Button -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div class="p-4 sm:p-6 md:p-10 bg-[#F7F4EE] min-h-screen text-left select-none" dir="ltr">
+    <!-- Header Section -->
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
       <div>
-        <h4 class="text-lg md:text-xl font-black text-slate-900 tracking-wide uppercase">ADD NEW MARBLE PROJECT</h4>
-        <p class="text-xs text-slate-400 font-bold mt-1">Upload marble showcase project directly with multiple gallery image files</p>
+        <h1 class="text-xl sm:text-[28px] font-black text-[#091124] tracking-tight uppercase">CREATE NEW PROJECT</h1>
+        <p class="text-xs sm:text-[13px] font-bold text-[#788FA6] mt-1">Add a new project to your portfolio</p>
       </div>
-
-      <RouterLink
-        to="/admin/projects"
-        class="inline-flex items-center justify-center px-6 py-2.5 bg-white hover:bg-[#F7F4F0] text-slate-900 border border-[#EAE3DA]/70 text-xs font-black rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.02)] transition-all duration-300 uppercase tracking-wider cursor-pointer self-start sm:self-auto"
-      >
-        <span class="mr-1.5 text-sm font-light">←</span> BACK TO PROJECTS
-      </RouterLink>
+      <router-link to="/admin/projects"
+        class="mt-4 sm:mt-0 flex items-center justify-center gap-2 bg-white hover:bg-[#F7F4EE] text-[#091124] px-5 py-2.5 rounded-full font-black text-[11px] tracking-wider border border-[#E6E1DA] shadow-xs uppercase transition-all">
+        ← BACK TO DASHBOARD
+      </router-link>
     </div>
 
-    <!-- Form Container -->
-    <div class="bg-white rounded-2xl border border-[#EAE3DA] shadow-[0_4px_20px_-4px_rgba(139,92,26,0.05)] w-full overflow-hidden">
-      <form @submit.prevent="handleSubmit" class="p-5 md:p-8 space-y-6 md:space-y-8" enctype="multipart/form-data">
+    <!-- Main Container Card -->
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl md:rounded-[1.75rem] border border-[#ECE6DD] p-6 sm:p-10 shadow-xs">
+      <form @submit.prevent="handleSubmit" class="space-y-8">
 
-        <!-- Titles Section (Ar & En) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-          <div class="flex flex-col space-y-2" dir="ltr">
-            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider">PROJECT TITLE (ENGLISH) <span class="text-red-500">*</span></label>
-            <input
-              type="text"
-              v-model="form.name_en"
-              placeholder="e.g. Imperial Gold Granite Majlis"
-              class="w-full px-4 py-3 bg-[#F7F4F0]/50 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white text-sm font-bold text-slate-800 transition-all duration-300 text-left placeholder:text-slate-400 placeholder:font-normal"
-              required
-            />
+        <!-- ROW 1: Project Names (EN & AR) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <!-- Project Name (English) -->
+          <div class="flex flex-col gap-2.5">
+            <label class="text-[11px] font-black tracking-wider">
+              <span class="text-[#788FA6] uppercase">PROJECT NAME</span>
+              <span class="text-[#A1461D] ml-1 uppercase">(ENGLISH)</span>
+            </label>
+            <input type="text" v-model="form.name_en" required placeholder="e.g., Granite, Marble, Quartz"
+              :class="{ 'border-red-500': errors.name_en }"
+              class="w-full px-5 py-4 rounded-xl border border-[#E6E1DA] bg-[#FDFDFD] text-[#2C3E50] font-semibold placeholder-[#788FA6]/40 focus:outline-none focus:border-[#A1461D] transition-all text-[13.5px]" />
+            <span class="text-red-500 text-xs font-semibold" v-if="errors.name_en">{{ errors.name_en[0] }}</span>
           </div>
 
-          <div class="flex flex-col space-y-2" dir="rtl">
-            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider">اسم المشروع (بالعربية) <span class="text-red-500">*</span></label>
-            <input
-              type="text"
-              v-model="form.name_ar"
-              placeholder="مثال: مجلس جرانيت إمبيريال جولد"
-              class="w-full px-4 py-3 bg-[#F7F4F0]/50 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white text-sm font-bold text-slate-800 transition-all duration-300 placeholder:text-slate-400 placeholder:font-normal"
-              required
-            />
-          </div>
-        </div>
-
-        <!-- Descriptions Section (Ar & En) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-          <div class="flex flex-col space-y-2" dir="ltr">
-            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider">DESCRIPTION (ENGLISH) <span class="text-red-500">*</span></label>
-            <textarea
-              v-model="form.description_en"
-              rows="4"
-              placeholder="Details about marble vein matching, polishing, and design layout..."
-              class="w-full px-4 py-3 bg-[#F7F4F0]/50 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white text-sm font-medium text-slate-800 transition-all duration-300 resize-none text-left placeholder:text-slate-400"
-              required
-            ></textarea>
-          </div>
-
-          <div class="flex flex-col space-y-2" dir="rtl">
-            <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider">وصف المشروع (بالعربية) <span class="text-red-500">*</span></label>
-            <textarea
-              v-model="form.description_ar"
-              rows="4"
-              placeholder="تفاصيل تركيب الرخام، دمج العروق (Book-match)، والتلميع الكريستالي..."
-              class="w-full px-4 py-3 bg-[#F7F4F0]/50 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white text-sm font-medium text-slate-800 transition-all duration-300 resize-none placeholder:text-slate-400"
-              required
-            ></textarea>
+          <!-- Project Name (Arabic) -->
+          <div class="flex flex-col gap-2.5 text-right" dir="rtl">
+            <label class="text-[11px] font-black tracking-wider">
+              <span class="text-[#A1461D] uppercase">اسم المشروع</span>
+              <span class="text-[#788FA6] mr-1 uppercase">(باللغة العربية)</span>
+            </label>
+            <input type="text" v-model="form.name_ar" required placeholder="مثال: جرانيت، رخام، كوارترز"
+              :class="{ 'border-red-500': errors.name_ar }"
+              class="w-full px-5 py-4 rounded-xl border border-[#E6E1DA] bg-[#FDFDFD] text-[#2C3E50] font-semibold placeholder-[#788FA6]/40 focus:outline-none focus:border-[#A1461D] transition-all text-[13.5px] text-right font-sans" />
+            <span class="text-red-500 text-xs font-semibold" v-if="errors.name_ar">{{ errors.name_ar[0] }}</span>
           </div>
         </div>
 
-        <!-- Category Dropdown -->
-        <div class="flex flex-col space-y-2" dir="ltr">
-          <label class="text-[11px] font-black text-slate-400 uppercase tracking-wider">
-            PROJECT CATEGORY (OPTIONAL)
-          </label>
+        <!-- ROW 2: Category Dropdown -->
+        <div class="flex flex-col gap-2.5">
+          <label class="text-[11px] font-black tracking-wider text-[#788FA6] uppercase">CATEGORY</label>
           <div class="relative">
-            <select
-              v-model="form.category_id"
-              class="w-full px-4 py-3 bg-[#F7F4F0]/50 border border-[#EAE3DA] rounded-xl focus:outline-none focus:border-amber-950 focus:bg-white text-sm font-bold text-slate-800 transition-all duration-300 cursor-pointer appearance-none"
-            >
-              <option :value="null">-- Select Category --</option>
-              <option
-                v-for="cat in categories"
-                :key="cat.id"
-                :value="cat.id"
-              >
-                {{ cat.name_en ? cat.name_en : '' }} {{ (cat.name_en && cat.name_ar) ? ' — ' : '' }} {{ cat.name_ar ? cat.name_ar : '' }}
+            <select v-model="form.category_id" required
+              :class="{ 'border-red-500': errors.category_id }"
+              class="w-full px-5 py-4 rounded-xl border border-[#E6E1DA] bg-[#FDFDFD] text-[#2C3E50] font-bold focus:outline-none focus:border-[#A1461D] transition-all cursor-pointer text-[13.5px] appearance-none">
+              <option value="" disabled selected>Select category...</option>
+              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                {{ cat.name_en || cat.name_ar || cat.name }}
               </option>
             </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+            <span class="absolute right-5 top-1/2 -translate-y-1/2 text-[#788FA6] pointer-events-none text-xs">▼</span>
+          </div>
+          <span class="text-red-500 text-xs font-semibold" v-if="errors.category_id">{{ errors.category_id[0] }}</span>
+        </div>
+
+        <!-- ROW 3: Descriptions (EN & AR) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <!-- Description (English) -->
+          <div class="flex flex-col gap-2.5">
+            <label class="text-[11px] font-black tracking-wider">
+              <span class="text-[#788FA6] uppercase">DESCRIPTION</span>
+              <span class="text-[#A1461D] ml-1 uppercase">(ENGLISH)</span>
+            </label>
+            <textarea v-model="form.description_en" rows="5"
+              placeholder="e.g., Collection of natural durable igneous rocks suitable for heavy-duty countertops and flooring..."
+              :class="{ 'border-red-500': errors.description_en }"
+              class="w-full px-5 py-4 rounded-xl border border-[#E6E1DA] bg-[#FDFDFD] text-[#2C3E50] font-semibold placeholder-[#788FA6]/40 focus:outline-none focus:border-[#A1461D] transition-all resize-none text-[13.5px] leading-relaxed"></textarea>
+            <span class="text-red-500 text-xs font-semibold" v-if="errors.description_en">{{ errors.description_en[0] }}</span>
+          </div>
+
+          <!-- Description (Arabic) -->
+          <div class="flex flex-col gap-2.5 text-right" dir="rtl">
+            <label class="text-[11px] font-black tracking-wider">
+              <span class="text-[#A1461D] uppercase">الوصف</span>
+              <span class="text-[#788FA6] mr-1 uppercase">(باللغة العربية)</span>
+            </label>
+            <textarea v-model="form.description_ar" rows="5"
+              placeholder="مثال: تشكيلة من الصخور الطبيعية الصلبة المقاومة للحرارة والخدش، مثالية للمطابخ والأرضيات الخارجية..."
+              :class="{ 'border-red-500': errors.description_ar }"
+              class="w-full px-5 py-4 rounded-xl border border-[#E6E1DA] bg-[#FDFDFD] text-[#2C3E50] font-semibold placeholder-[#788FA6]/40 focus:outline-none focus:border-[#A1461D] transition-all resize-none text-[13.5px] leading-relaxed text-right font-sans"></textarea>
+            <span class="text-red-500 text-xs font-semibold" v-if="errors.description_ar">{{ errors.description_ar[0] }}</span>
           </div>
         </div>
 
-        <!-- Drag & Drop Upload Zone -->
-        <div class="bg-[#F7F4F0]/40 border border-[#EAE3DA] rounded-2xl p-4 sm:p-6 md:p-8 space-y-6" dir="ltr">
-          <div>
-            <h5 class="text-xs md:text-sm font-black text-slate-900 uppercase tracking-wide">PROJECT GALLERY FILES</h5>
-            <p class="text-[11px] text-slate-400 font-bold mt-0.5">Upload multiple high-res photos showing the marble textures and details</p>
-          </div>
-
-          <div
-            @dragover.prevent="isDragging = true"
-            @dragleave.prevent="isDragging = false"
-            @drop.prevent="handleDrop"
-            :class="[
-              'border-2 border-dashed rounded-xl p-8 md:p-12 flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer',
-              isDragging ? 'border-amber-900 bg-amber-50/50' : 'border-[#EAE3DA] bg-white hover:border-[#E2D9CD]'
-            ]"
-            @click="$refs.fileInput.click()"
-          >
-            <input
-              type="file"
-              ref="fileInput"
-              multiple
-              accept="image/*"
-              class="hidden"
-              @change="handleFileSelect"
-            />
-
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-
-            <p class="text-xs font-black text-slate-700 uppercase tracking-wider">
-              DRAG & DROP PROJECT IMAGES OR <span class="text-[#8B5E1A] underline cursor-pointer">BROWSE</span>
-            </p>
-            <p class="text-[10px] text-slate-400 font-bold mt-1">Supports PNG, JPG, WEBP formats</p>
-          </div>
-
-          <!-- Previews -->
-          <div v-if="imagePreviews.length > 0" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-2">
-            <div
-              v-for="(url, index) in imagePreviews"
-              :key="index"
-              class="relative aspect-[4/3] rounded-xl border border-[#EAE3DA] bg-white p-1.5 shadow-xs group overflow-hidden"
-            >
-              <img :src="url" class="w-full h-full object-cover rounded-lg" />
-              <div class="absolute inset-0 bg-amber-950/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-200">
-                <button
-                  type="button"
-                  @click.stop="removeImage(index)"
-                  class="bg-white text-red-600 p-2 rounded-xl shadow-md hover:scale-105 active:scale-95 transition cursor-pointer"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+        <!-- ROW 4: Image Dropzone Box -->
+        <div class="flex flex-col gap-2.5">
+          <label class="text-[11px] font-black tracking-wider text-[#788FA6] uppercase">PROJECT IMAGES</label>
+          <div class="flex items-center justify-center w-full">
+            <label class="flex flex-col items-center justify-center w-full h-36 border-2 border-[#E6E1DA] border-dashed rounded-xl cursor-pointer bg-[#FDFDFD] hover:bg-[#F7F4EE] transition-colors">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <span class="text-2xl mb-1">📸</span>
+                <p class="text-xs font-bold text-[#788FA6]">Click to upload or drag project images here</p>
+                <p class="text-[10px] font-medium text-[#788FA6]/70 mt-0.5">Supports PNG, JPG or WEBP up to 5MB</p>
               </div>
+              <input type="file" class="hidden" multiple accept="image/*" @change="handleFileUpload" />
+            </label>
+          </div>
+
+          <!-- Live Image Previews -->
+          <div v-if="imagePreviews.length > 0" class="grid grid-cols-2 sm:grid-cols-5 gap-4 mt-2">
+            <div v-for="(src, index) in imagePreviews" :key="index"
+              class="relative rounded-xl overflow-hidden border border-[#E6E1DA] bg-white aspect-square shadow-xs group">
+              <img :src="src" class="w-full h-full object-cover" />
+              <button type="button" @click="removeImage(index)"
+                class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-black rounded-xl uppercase">
+                Remove
+              </button>
             </div>
           </div>
+          <span class="text-red-500 text-xs font-semibold" v-if="errors.images">{{ errors.images[0] }}</span>
         </div>
 
-        <!-- Submit Buttons Bar -->
-        <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-[#EAE3DA]/60" dir="ltr">
-          <RouterLink
-            to="/admin/projects"
-            class="w-full sm:w-auto px-6 py-2.5 bg-white hover:bg-[#F7F4F0] text-slate-500 border border-[#EAE3DA] text-[11px] font-black rounded-full transition-all duration-200 uppercase tracking-widest text-center"
-          >
-            CANCEL
-          </RouterLink>
+        <!-- General Error Alert -->
+        <div v-if="errors.general" class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-bold">
+          {{ errors.general }}
+        </div>
 
-          <button
-            type="submit"
-            :disabled="isSubmitting"
-            class="w-full sm:w-auto px-8 py-2.5 bg-[#F7F4F0] hover:bg-[#8B5E1A] hover:text-white text-[#8B5E1A] border border-[#E2D9CD] text-[11px] font-black rounded-full transition-all duration-300 uppercase tracking-widest text-center cursor-pointer disabled:opacity-50"
-          >
-            {{ isSubmitting ? 'SAVING...' : 'PUBLISH MARBLE PROJECT' }}
+        <!-- Bottom Action Bar -->
+        <div class="flex items-center justify-end gap-3 pt-5 border-t border-[#ECE6DD]">
+          <button type="button" @click="router.push('/admin/projects')"
+            class="px-6 py-3.5 rounded-xl bg-white border border-[#E6E1DA] hover:bg-[#F7F4EE] text-[#091124] font-black text-xs uppercase tracking-wider transition-all cursor-pointer">
+            CANCEL
+          </button>
+          <button type="submit" :disabled="isSubmitting"
+            class="px-8 py-3.5 rounded-xl bg-[#091124] hover:bg-slate-800 disabled:bg-slate-500 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer">
+            {{ isSubmitting ? 'SAVING PROJECT...' : 'SAVE PROJECT' }}
           </button>
         </div>
 
@@ -180,75 +140,85 @@
 </template>
 
 <script setup>
-import { ref, onMounted, toRaw } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '@/api/api'
+import api from '@/api/api.js'
 
 const router = useRouter()
-const isSubmitting = ref(false)
-const isDragging = ref(false)
-
 const categories = ref([])
+const isSubmitting = ref(false)
+const errors = ref({})
+
 const form = ref({
-  name_en: '',
   name_ar: '',
-  category_id: null,
-  description_en: '',
-  description_ar: ''
+  name_en: '',
+  category_id: '',
+  description_ar: '',
+  description_en: ''
 })
 
 const uploadedFiles = ref([])
 const imagePreviews = ref([])
 
-// Fetch Categories
-onMounted(async () => {
+const fetchCategories = async () => {
   try {
-    const response = await api.get('/categories')
+    const response = await api.get('/project-categories')
     categories.value = response.data?.data || response.data || []
-  } catch (error) {
-    console.error('Error loading categories:', error)
+  } catch (err) {
+    console.error('Failed to load categories:', err)
   }
-})
-
-// Drag & Drop handlers
-const handleFileSelect = (e) => addNewFiles(e.target.files)
-const handleDrop = (e) => {
-  isDragging.value = false
-  addNewFiles(e.dataTransfer.files)
 }
 
-const addNewFiles = (files) => {
-  Array.from(files).forEach(file => {
-    if (file instanceof File && file.type.startsWith('image/')) {
-      uploadedFiles.value.push(file)
-      imagePreviews.value.push(URL.createObjectURL(file))
-    }
+onMounted(() => {
+  fetchCategories()
+})
+
+const handleFileUpload = (event) => {
+  const files = Array.from(event.target.files)
+  files.forEach(file => {
+    uploadedFiles.value.push(file)
+    const reader = new FileReader()
+    reader.onload = (e) => { imagePreviews.value.push(e.target.result) }
+    reader.readAsDataURL(file)
   })
 }
 
 const removeImage = (index) => {
-  URL.revokeObjectURL(imagePreviews.value[index])
   uploadedFiles.value.splice(index, 1)
   imagePreviews.value.splice(index, 1)
 }
 
-// Submit Form
 const handleSubmit = async () => {
   isSubmitting.value = true
+  errors.value = {}
+
   try {
     const data = new FormData()
-    data.append('name_en', form.value.name_en)
     data.append('name_ar', form.value.name_ar)
-    data.append('description_en', form.value.description_en)
-    data.append('description_ar', form.value.description_ar)
+    data.append('name_en', form.value.name_en)
+
+    // توليد الـ Slug تلقائياً من الاسم بالإنجليزية برمجياً
+    const generatedSlug = form.value.name_en
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+
+    data.append('slug', generatedSlug)
 
     if (form.value.category_id) {
-      data.append('category_id', form.value.category_id)
+      data.append('category_id', parseInt(form.value.category_id, 10))
+    }
+    if (form.value.description_ar) {
+      data.append('description_ar', form.value.description_ar)
+    }
+    if (form.value.description_en) {
+      data.append('description_en', form.value.description_en)
     }
 
-    const rawFiles = toRaw(uploadedFiles.value)
-    rawFiles.forEach((file) => {
-      data.append('images[]', file, file.name)
+    uploadedFiles.value.forEach((file) => {
+      data.append('images[]', file)
     })
 
     await api.post('/projects', data, {
@@ -260,22 +230,12 @@ const handleSubmit = async () => {
     router.push('/admin/projects')
   } catch (error) {
     if (error.response && error.response.status === 422) {
-      console.log('Validation Errors:', error.response.data.errors)
+      errors.value = error.response.data.errors || {}
     } else {
-      console.error('Error creating project:', error)
+      errors.value = { general: 'An error occurred while saving. Please try again.' }
     }
   } finally {
     isSubmitting.value = false
   }
 }
 </script>
-
-<style scoped>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in {
-  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-</style>

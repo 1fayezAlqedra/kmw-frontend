@@ -86,7 +86,7 @@
       <div class="hidden lg:flex items-center gap-3 shrink-0">
         <button
           @click="toggleLanguage"
-          class="px-3.5 py-2 rounded-xl border border-stone-700 bg-stone-900/80 text-stone-200 hover:text-amber-400 hover:border-amber-500/50 text-xs font-bold transition-all duration-200 flex items-center gap-2 backdrop-blur-sm shadow-sm active:scale-95 whitespace-nowrap"
+          class="px-3.5 py-2 rounded-xl border border-stone-700 bg-stone-900/80 text-stone-200 hover:text-amber-400 hover:border-amber-500/50 text-xs font-bold transition-all duration-200 flex items-center gap-2 backdrop-blur-sm shadow-sm active:scale-95 whitespace-nowrap cursor-pointer"
         >
           <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
           <span>{{ currentLang === 'ar' ? 'English' : 'العربية' }}</span>
@@ -107,7 +107,7 @@
 
       <button
         @click="isMobileMenuOpen = !isMobileMenuOpen"
-        class="lg:hidden p-2 rounded-xl border border-amber-500/40 bg-stone-900/80 text-amber-500 hover:text-amber-400 active:scale-90 transition-all duration-200 shadow-md z-50 shrink-0"
+        class="lg:hidden p-2 rounded-xl border border-amber-500/40 bg-stone-900/80 text-amber-500 hover:text-amber-400 active:scale-90 transition-all duration-200 shadow-md z-50 shrink-0 cursor-pointer"
         aria-label="Toggle Menu"
       >
         <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,7 +150,7 @@
         <div class="flex justify-end w-full mb-4">
           <button
             @click="isMobileMenuOpen = false"
-            class="p-2 rounded-full border border-stone-700 bg-black/40 text-stone-300 hover:text-white active:scale-90 transition-all"
+            class="p-2 rounded-full border border-stone-700 bg-black/40 text-stone-300 hover:text-white active:scale-90 transition-all cursor-pointer"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -176,7 +176,7 @@
               <button
                 v-if="link.children"
                 @click="toggleMobileSubmenu(link.name)"
-                class="p-1 text-stone-400 hover:text-amber-400"
+                class="p-1 text-stone-400 hover:text-amber-400 cursor-pointer"
               >
                 <svg
                   class="w-4 h-4 transition-transform duration-200"
@@ -219,7 +219,7 @@
         <div class="flex flex-col items-center gap-3 w-full pt-4 border-t border-stone-800/80 mt-auto">
           <button
             @click="toggleLanguage"
-            class="w-full py-2.5 rounded-xl border border-stone-700 bg-black/40 text-stone-200 text-xs font-bold uppercase tracking-widest active:scale-95 transition-all text-center whitespace-nowrap"
+            class="w-full py-2.5 rounded-xl border border-stone-700 bg-black/40 text-stone-200 text-xs font-bold uppercase tracking-widest active:scale-95 transition-all text-center whitespace-nowrap cursor-pointer"
           >
             {{ currentLang === 'ar' ? 'English' : 'العربية' }}
           </button>
@@ -249,6 +249,7 @@ const navLinksData = {
   ar: [
     { name: 'الرئيسية', to: '/' },
     { name: 'عن الشركة', to: '/about' },
+    { name: 'دورة العمل', to: '/project-process' },
     {
       name: 'الخدمات',
       to: '/services',
@@ -278,6 +279,7 @@ const navLinksData = {
   en: [
     { name: 'Home', to: '/' },
     { name: 'About Us', to: '/about' },
+    { name: 'Procedure', to: '/project-process' },
     {
       name: 'Services',
       to: '/services',

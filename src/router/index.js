@@ -19,6 +19,11 @@ const routes = [
     name: 'Contact',
     component: () => import('../views/public/ContactUs.vue'),
   },
+  {
+    path: '/project-process',
+    name: 'ProjectProcess',
+    component: () => import('../views/public/ProjectProcessView.vue'),
+  },
 
   // --------------------------------------------------------------------------
   // 2. Services Pages

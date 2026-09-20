@@ -65,6 +65,23 @@
         </div>
 
         <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+          <!-- Category Filter Select -->
+          <div class="relative w-full sm:w-48">
+            <select v-model="selectedCategory"
+              class="w-full appearance-none pl-4 pr-10 py-2.5 bg-[#F7F4EE]/40 border border-[#E6E1DA] rounded-xl focus:outline-none focus:border-[#A1461D] focus:bg-white text-xs font-bold text-[#091124] transition-all duration-300 shadow-xs cursor-pointer">
+              <option value="" class="bg-white hover:bg-[#F7F4EE] text-[#091124] font-bold py-1">
+                All Categories ({{ products.length }})
+              </option>
+              <option v-for="cat in availableCategories" :key="cat" :value="cat" class="bg-white hover:bg-[#F7F4EE] text-[#091124] font-bold py-1">
+                {{ cat }} ({{ categoryCounts[cat] || 0 }})
+              </option>
+            </select>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#788FA6] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          <!-- Search Input -->
           <div class="relative w-full sm:w-64 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-[#788FA6] absolute left-4 pointer-events-none"
               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -102,7 +119,7 @@
           </thead>
 
           <tbody class="divide-y divide-[#ECE6DD]/50">
-            <tr v-for="product in filteredProducts" :key="product.id"
+            <tr v-for="product in paginatedProducts" :key="product.id"
               class="hover:bg-[#F7F4EE]/20 transition-colors duration-200 group">
               <td class="py-5 px-6 align-top pt-6">
                 <span class="text-sm font-bold text-[#788FA6] font-mono">#{{ product.id }}</span>
@@ -183,7 +200,7 @@
 
       <!-- Mobile Layout -->
       <div v-if="!loading" class="block md:hidden divide-y divide-[#ECE6DD]/60">
-        <div v-for="product in filteredProducts" :key="product.id" class="p-5 flex flex-col gap-4 bg-white">
+        <div v-for="product in paginatedProducts" :key="product.id" class="p-5 flex flex-col gap-4 bg-white">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-xs font-bold text-[#788FA6] font-mono">#{{ product.id }}</span>
@@ -249,19 +266,56 @@
         </p>
       </div>
 
+      <!-- Pagination Bar Controls -->
+      <div v-if="!loading && totalPages > 1"
+        class="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 md:px-8 border-t border-[#ECE6DD] bg-[#F7F4EE]/20">
+        <div class="text-xs text-[#788FA6] font-bold">
+          Showing <span class="text-[#091124] font-mono">{{ startIndex + 1 }}</span> to
+          <span class="text-[#091124] font-mono">{{ Math.min(endIndex, filteredProducts.length) }}</span> of
+          <span class="text-[#091124] font-mono">{{ filteredProducts.length }}</span> items
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button @click="currentPage--" :disabled="currentPage === 1"
+            class="px-3 py-1.5 text-xs font-bold rounded-lg border border-[#ECE6DD] bg-white text-[#091124] hover:bg-[#F7F4EE] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs">
+            Previous
+          </button>
+
+          <button v-for="page in totalPages" :key="page" @click="currentPage = page"
+            :class="[
+              'px-3 py-1.5 text-xs font-bold rounded-lg border font-mono transition-all shadow-xs',
+              currentPage === page
+                ? 'bg-[#091124] text-white border-[#091124]'
+                : 'bg-white text-[#091124] border-[#ECE6DD] hover:bg-[#F7F4EE]'
+            ]">
+            {{ page }}
+          </button>
+
+          <button @click="currentPage++" :disabled="currentPage === totalPages"
+            class="px-3 py-1.5 text-xs font-bold rounded-lg border border-[#ECE6DD] bg-[#F7F4EE] text-[#091124] hover:bg-[#091124] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xs">
+            Next
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
 const searchQuery = ref('')
+const selectedCategory = ref('')
 const products = ref([])
 const loading = ref(true)
+
+// Pagination Control States
+const currentPage = ref(1)
+const itemsPerPage = 12
 
 // Config base URL for images storage
 const storageBaseUrl = 'http://127.0.0.1:8000/storage/'
@@ -280,7 +334,7 @@ const fetchProducts = async () => {
   loading.value = true
   try {
     const response = await axios.get('http://127.0.0.1:8000/api/v1/products', {
-      headers: getAuthHeaders() // <-- إضافة التوكين هنا
+      headers: getAuthHeaders()
     })
     products.value = response.data?.data || response.data || []
   } catch (error) {
@@ -295,6 +349,24 @@ const fetchProducts = async () => {
 
 onMounted(() => {
   fetchProducts()
+})
+
+// Extract Unique Categories list dynamically
+const availableCategories = computed(() => {
+  const cats = products.value.map(p => p.category?.name_en || p.category?.slug).filter(Boolean)
+  return [...new Set(cats)]
+})
+
+// 🔢 حساب عدد المنتجات لكل تصنيف بشكل ديناميكي
+const categoryCounts = computed(() => {
+  const counts = {}
+  products.value.forEach(p => {
+    const catName = p.category?.name_en || p.category?.slug
+    if (catName) {
+      counts[catName] = (counts[catName] || 0) + 1
+    }
+  })
+  return counts
 })
 
 // Helper to determine cover image path
@@ -314,34 +386,52 @@ const totalImagesCount = computed(() => {
   }, 0)
 })
 
-// Filter products dynamically via search query
+// Filter products dynamically via search query & category
 const filteredProducts = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
-  if (!query) return products.value
+  const cat = selectedCategory.value.toLowerCase().trim()
 
   return products.value.filter(p => {
-    const categoryName = p.category?.name_en || ''
-    return (
+    const categoryName = (p.category?.name_en || p.category?.slug || '').toLowerCase()
+
+    const matchesSearch = !query || (
       p.name_en?.toLowerCase().includes(query) ||
       p.name_ar?.includes(query) ||
-      categoryName.toLowerCase().includes(query)
+      categoryName.includes(query)
     )
+
+    const matchesCategory = !cat || categoryName === cat
+
+    return matchesSearch && matchesCategory
   })
+})
+
+// Pagination Computations
+const totalPages = computed(() => Math.ceil(filteredProducts.value.length / itemsPerPage) || 1)
+const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage)
+const endIndex = computed(() => startIndex.value + itemsPerPage)
+
+const paginatedProducts = computed(() => {
+  return filteredProducts.value.slice(startIndex.value, endIndex.value)
+})
+
+// Reset to page 1 whenever filters change
+watch([searchQuery, selectedCategory], () => {
+  currentPage.value = 1
 })
 
 const handleEdit = (id) => {
   router.push(`/admin/edit-product/${id}`)
 }
 
-// 🗑️ إصلاح دالة الحذف بإضافة التوكين في الهيدر
+// 🗑️ دالة الحذف
 const handleDelete = async (id) => {
   if (confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/v1/products/${id}`, {
-        headers: getAuthHeaders() // <--- التعديل الجوهري: إرسال الـ Bearer Token
+        headers: getAuthHeaders()
       })
 
-      // إزالة المنتج المقتول مباشرة من المصفوفة بالفرونت إند لتحديث الواجهة فوراً
       products.value = products.value.filter(p => p.id !== id)
 
     } catch (error) {

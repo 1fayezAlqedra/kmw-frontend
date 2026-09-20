@@ -130,6 +130,7 @@
                 type="button"
                 @click.stop="removeImage"
                 class="bg-white text-red-600 p-2 rounded-xl shadow-md hover:scale-105 active:scale-95 transition cursor-pointer"
+                title="Remove Image"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -163,7 +164,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import apiClient, { getImageUrl } from '@/api/api'
 
@@ -186,6 +187,8 @@ const form = ref({
 
 const coverFile = ref(null)
 const imagePreview = ref(null)
+const isBlobUrl = ref(false) // لمتابعة تنظيف الذاكرة
+const shouldDeleteOriginalImage = ref(false) // لرفع راية الحذف إذا لزم الأمر للباك إند
 
 const triggerFileInput = () => {
   if (fileInput.value) {
@@ -208,6 +211,7 @@ onMounted(async () => {
       const imgPath = category.image || category.image_path || category.image_url
       if (imgPath) {
         imagePreview.value = typeof getImageUrl === 'function' ? getImageUrl(imgPath) : imgPath
+        isBlobUrl.value = false
       }
     }
   } catch (error) {
@@ -228,24 +232,45 @@ const handleFileSelect = (e) => {
 
 const handleDrop = (e) => {
   isDragging.value = false
-  const file = e.dataTransfer.files[0]
+  const file = e.target.files[0]
   if (file && file.type.startsWith('image/')) {
     setFile(file)
   }
 }
 
 const setFile = (file) => {
+  // تفريغ الـ ObjectURL القديم لمنع Memory Leaks
+  if (isBlobUrl.value && imagePreview.value) {
+    URL.revokeObjectURL(imagePreview.value)
+  }
+
   coverFile.value = file
   imagePreview.value = URL.createObjectURL(file)
+  isBlobUrl.value = true
+  shouldDeleteOriginalImage.value = false
 }
 
 const removeImage = () => {
+  if (isBlobUrl.value && imagePreview.value) {
+    URL.revokeObjectURL(imagePreview.value)
+  }
+
   coverFile.value = null
   imagePreview.value = null
+  isBlobUrl.value = false
+  shouldDeleteOriginalImage.value = true // علم الباك إن إني مسحت الصورة الأصلية
+
   if (fileInput.value) {
     fileInput.value.value = ''
   }
 }
+
+// Cleanup عند خروج المستخدِم من الصفحة
+onUnmounted(() => {
+  if (isBlobUrl.value && imagePreview.value) {
+    URL.revokeObjectURL(imagePreview.value)
+  }
+})
 
 // Submit Form to project-categories/{id} API endpoint
 const handleSubmit = async () => {
@@ -258,20 +283,23 @@ const handleSubmit = async () => {
     // 1. Method Spoofing الخاص بـ Laravel للتحديث عبر POST
     data.append('_method', 'PUT')
 
-    data.append('name_en', form.value.name_en || '')
-    data.append('name_ar', form.value.name_ar || '')
+    data.append('name_en', form.value.name_en?.trim() || '')
+    data.append('name_ar', form.value.name_ar?.trim() || '')
 
     if (form.value.description_en) {
-      data.append('description_en', form.value.description_en)
+      data.append('description_en', form.value.description_en.trim())
     }
     if (form.value.description_ar) {
-      data.append('description_ar', form.value.description_ar)
-    }
-    if (coverFile.value) {
-      data.append('image', coverFile.value)
+      data.append('description_ar', form.value.description_ar.trim())
     }
 
-    // 2. ترك Axios يتعامل تلقائياً مع הـ Content-Type لحساب الـ boundary
+    if (coverFile.value) {
+      data.append('image', coverFile.value)
+    } else if (shouldDeleteOriginalImage.value) {
+      // إرسال خيار اختياري للـ API في حال كنت تدعم مسح الصورة بدون استبدالها
+      data.append('remove_image', '1')
+    }
+
     const response = await apiClient.post(`project-categories/${categoryId}`, data, {
       headers: {
         'Accept': 'application/json'

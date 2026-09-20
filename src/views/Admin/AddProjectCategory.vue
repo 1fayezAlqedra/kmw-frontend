@@ -96,7 +96,7 @@
               'border-2 border-dashed rounded-xl p-8 md:p-12 flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer',
               isDragging ? 'border-amber-900 bg-amber-50/50' : 'border-[#EAE3DA] bg-white hover:border-[#E2D9CD]'
             ]"
-            @click="$refs.fileInput.click()"
+            @click="fileInput?.click()"
           >
             <input
               type="file"
@@ -157,7 +157,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '@/api/api'
 
@@ -165,6 +165,7 @@ const router = useRouter()
 const isSubmitting = ref(false)
 const isDragging = ref(false)
 const errorMessage = ref('')
+const fileInput = ref(null)
 
 const form = ref({
   name_en: '',
@@ -206,7 +207,17 @@ const removeImage = () => {
   }
   coverFile.value = null
   imagePreview.value = null
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
 }
+
+// Cleanup object URL on unmount to prevent memory leaks
+onUnmounted(() => {
+  if (imagePreview.value) {
+    URL.revokeObjectURL(imagePreview.value)
+  }
+})
 
 // Submit Form to project-categories API endpoint
 const handleSubmit = async () => {
@@ -228,16 +239,7 @@ const handleSubmit = async () => {
       data.append('image', coverFile.value)
     }
 
-    // جلب التوكن من الموضع المخزن فيه
-    const token = localStorage.getItem('token') || localStorage.getItem('access_token')
-
-    const response = await apiClient.post('project-categories', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': token ? `Bearer ${token}` : '',
-        'Accept': 'application/json'
-      }
-    })
+    const response = await apiClient.post('project-categories', data)
 
     if (response.data && (response.data.success || response.status === 201 || response.status === 200)) {
       router.push('/admin/project-categories')
@@ -247,11 +249,10 @@ const handleSubmit = async () => {
       errorMessage.value = 'Unauthenticated session. Please log in again.'
     } else if (error.response && error.response.status === 422) {
       const errors = error.response.data.errors
-      const firstErrorKey = Object.keys(errors)[0]
-      errorMessage.value = errors[firstErrorKey][0] || 'Please fix the validation errors.'
+      errorMessage.value = Object.values(errors).flat().join(' | ')
     } else {
       console.error('Error creating category:', error)
-      errorMessage.value = 'Failed to create category. Please try again.'
+      errorMessage.value = error.response?.data?.message || 'Failed to create category. Please try again.'
     }
   } finally {
     isSubmitting.value = false

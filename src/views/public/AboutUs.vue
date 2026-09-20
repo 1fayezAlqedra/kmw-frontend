@@ -12,6 +12,7 @@
 
       <main class="flex-grow pt-4 sm:pt-10 pb-10 sm:pb-20 px-3 sm:px-6">
 
+        <!-- Hero Section -->
         <section class="relative py-8 sm:py-16 lg:py-24 border-b border-stone-800/60 overflow-hidden">
           <div class="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 text-center relative z-10 animate-fade-in-up">
             <span
@@ -40,6 +41,7 @@
           </div>
         </section>
 
+        <!-- Company Details Sections -->
         <section class="max-w-5xl mx-auto py-8 sm:py-14 lg:py-20">
           <div class="space-y-6 sm:space-y-12">
 
@@ -185,6 +187,90 @@
           </div>
         </section>
 
+        <!-- =================================================== -->
+        <!-- OUR TEAM SECTION (قسم فريق العمل الفاخر) -->
+        <!-- =================================================== -->
+        <section class="max-w-7xl mx-auto py-12 sm:py-20 px-2 sm:px-6">
+
+          <!-- Section Title Header -->
+          <div class="text-center mb-10 sm:mb-16 relative z-10 animate-fade-in-up">
+            <span
+              class="inline-block px-4 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-400 text-xs sm:text-sm font-semibold mb-3 tracking-widest uppercase shadow-md backdrop-blur-md"
+              :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
+            >
+              {{ currentLang === 'ar' ? 'القيادة والاحتراف' : 'Leadership & Craftsmanship' }}
+            </span>
+
+            <h2
+              class="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-4 drop-shadow-md"
+              :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
+            >
+              {{ currentLang === 'ar' ? 'فريق العمل والقيادة' : 'Meet Our Leadership Team' }}
+            </h2>
+
+            <div class="w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto rounded-full"></div>
+          </div>
+
+          <!-- Team Cards Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
+
+            <div
+              v-for="(member, index) in teamMembers"
+              :key="index"
+              class="group relative bg-stone-900/70 backdrop-blur-xl p-6 rounded-2xl border border-stone-800 hover:border-amber-500/60 shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col items-center text-center overflow-hidden"
+            >
+              <!-- Ambient Glow & Overlay -->
+              <div class="absolute -inset-1 bg-gradient-to-b from-amber-500/20 via-transparent to-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl pointer-events-none"></div>
+              <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-bl-full blur-2xl pointer-events-none"></div>
+
+              <!-- Image Frame Container -->
+              <div class="relative w-36 h-36 sm:w-44 sm:h-44 mb-6 rounded-full p-1.5 bg-gradient-to-b from-amber-500/60 via-stone-700/40 to-stone-900 shadow-xl group-hover:scale-105 transition-transform duration-500">
+                <div class="w-full h-full rounded-full overflow-hidden bg-stone-950 relative flex items-center justify-center">
+
+                  <!-- Display image if provided, otherwise standard luxury placeholder -->
+                  <img
+                    v-if="member.image"
+                    :src="member.image"
+                    :alt="member.name"
+                    class="w-full h-full object-cover rounded-full transition-transform duration-700 group-hover:scale-110"
+                  />
+
+                  <!-- Luxurious Avatar Placeholder -->
+                  <div v-else class="w-full h-full flex flex-col items-center justify-center bg-stone-900 text-stone-600 group-hover:text-amber-500/70 transition-colors duration-300">
+                    <svg class="w-16 h-16 sm:w-20 sm:h-20" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Member Info -->
+              <div class="relative z-10 w-full">
+                <!-- Job Title Tag -->
+                <span
+                  class="inline-block px-3 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold tracking-wider uppercase mb-2"
+                  :class="currentLang === 'ar' ? 'font-arabic-modern' : 'font-royal-en'"
+                >
+                  {{ currentLang === 'ar' ? member.roleAr : member.roleEn }}
+                </span>
+
+                <!-- Member Name -->
+                <h3
+                  class="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors duration-300 tracking-wide mt-1"
+                  :class="currentLang === 'ar' ? 'font-arabic-modern' : ''"
+                >
+                  {{ member.name }}
+                </h3>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+        <!-- =================================================== -->
+
       </main>
 
       <Footer />
@@ -204,6 +290,67 @@ import sectionbg from '@/assets/puplic_wepsite/navebar/images/button_hover.jpg';
 
 // استيراد الصورة القديمة لاستخدامها كخلفية للكروت
 import oldCardBg from '@/assets/puplic_wepsite/navebar/images/navbarnackground.png';
+
+// ملاحظة: يمكنك استيراد صور أعضاء الفريق هنا وإضافتها للـ Array في أسفل الكود
+// import ceoImg from '@/assets/team/ceo.jpg';
+
+// قائمة أعضاء الفريق مع المسميات الوظيفية بالعربية والإنجليزية ومكان حجز الصورة
+
+import Hesham from '@/assets/puplic_wepsite/aboutUs/images/ourTeam/Hesham.jpg' ;
+import Ahmed from '@/assets/puplic_wepsite/aboutUs/images/ourTeam/Ahmed_Fayez.jpg' ;
+import Shehroz_Shabbir from '@/assets/puplic_wepsite/aboutUs/images/ourTeam/Shehroz_Shabbir.jpeg' ;
+
+
+const teamMembers = ref([
+  {
+    name: 'Mohd Hesham F E Al Qedra',
+    roleEn: 'CEO',
+    roleAr: 'الرئيس التنفيذي',
+    image: Hesham // ضع اسم متغير الصورة المباشر هنا عند توفرها (مثال: ceoImg)
+  },
+  {
+    name: 'Ramadan Mohd Kamel',
+    roleEn: 'Executive Manager',
+    roleAr: 'المدير التنفيذي',
+    image: null
+  },
+  {
+    name: 'Engr. Ahmed Fayez Al Qedra',
+    roleEn: 'Projects Manager',
+    roleAr: 'مدير المشاريع',
+    image:Ahmed
+  },
+  {
+    name: 'Mossa Abu Bakar',
+    roleEn: 'Production Manager',
+    roleAr: 'مدير الإنتاج',
+    image: null
+  },
+  {
+    name: 'Shehroz Shabbir',
+    roleEn: 'Admin',
+    roleAr: 'مسؤول الإدارة',
+    image: Shehroz_Shabbir
+  },
+  {
+    name: 'Rania Shehab',
+    roleEn: 'Sales Executive',
+    roleAr: 'تنفيذي مبيعات',
+    image: null
+  },
+  {
+    name: 'Rufo Jr. A. Padayhag',
+    roleEn: 'Site Engineer',
+    roleAr: 'مهندس موقع',
+    image: null
+  },
+  {
+    name: 'Yousef Abdul Haq',
+    roleEn: 'Site Supervisor',
+    roleAr: 'مشرف موقع',
+    image: null
+  }
+]);
 
 // دالة جلب اللغة المخزنة الموحدة عبر التطبيق
 const getStoredLang = () => {
